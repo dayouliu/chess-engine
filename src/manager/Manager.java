@@ -1,4 +1,4 @@
-package piecemanager;
+package manager;
 
 import main.Application;
 import piece.*;

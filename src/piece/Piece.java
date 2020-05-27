@@ -2,7 +2,7 @@ package piece;
 
 import datastruct.RC;
 import main.Application;
-import piecemanager.Movement;
+import manager.Movement;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

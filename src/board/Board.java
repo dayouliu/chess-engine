@@ -2,8 +2,7 @@ package board;
 
 import datastruct.RC;
 import main.Application;
-import piece.*;
-import piecemanager.Manager;
+import manager.Manager;
 
 import java.awt.*;
 
