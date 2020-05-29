@@ -1,16 +1,16 @@
 package gui.board;
 
-import main.Application;
+import main.Chess;
 
 import java.awt.*;
 
 public class Square {
 
-    private Application app;
+    private Chess app;
     private int r, c;
     private Color color;
 
-    public Square(Application app, int r, int c) {
+    public Square(Chess app, int r, int c) {
         this.app = app;
         this.r = r;
         this.c = c;

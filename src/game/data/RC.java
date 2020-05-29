@@ -1,4 +1,4 @@
-package data;
+package game.data;
 
 public class RC {
 

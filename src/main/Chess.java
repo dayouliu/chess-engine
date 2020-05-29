@@ -1,13 +1,15 @@
 package main;
 
-import game.State;
+import game.data.State;
 import gui.Assets;
 import gui.board.Board;
+import tests.Test;
 
 import java.awt.*;
 
 public class Chess extends Application {
 
+    protected Test test;
     protected Board board;
     protected Assets assets;
 
@@ -15,11 +17,11 @@ public class Chess extends Application {
 
     protected void init() {
         super.init();
-
-        // Game creation
         assets = new Assets();
         board = new Board(this);
         board.init();
+        super.initrz();
+        test.init();
     }
 
     protected void update() {

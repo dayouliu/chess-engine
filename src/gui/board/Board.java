@@ -1,6 +1,6 @@
 package gui.board;
 
-import data.RC;
+import game.data.RC;
 import gui.pieces.*;
 import main.Chess;
 
@@ -46,19 +46,18 @@ public class Board {
 	}
 
 	public void init() {
-		resize();
 		for(int i = 0; i < row; i++) {
 			addPiece(new Pawn(app, true, row-2, i));
 			addPiece(new Pawn(app, false, 1, i));
 		}
-		addPiece(new Rook(app, true, row-1, 0));
-		addPiece(new Knight(app, true, row-1, 1));
-		addPiece(new Bishop(app, true, row-1, 2));
-		addPiece(new Queen(app, true, row-1, 3));
-		addPiece(new King(app, true, row-1, 4));
-		addPiece(new Bishop(app, true, row-1, 5));
-		addPiece(new Knight(app, true, row-1, 6));
-		addPiece(new Rook(app, true, row-1, 7));
+		addPiece(new Rook(app, true, 7, 0));
+		addPiece(new Knight(app, true, 7, 1));
+		addPiece(new Bishop(app, true, 7, 2));
+		addPiece(new Queen(app, true, 7, 3));
+		addPiece(new King(app, true, 7, 4));
+		addPiece(new Bishop(app, true, 7, 5));
+		addPiece(new Knight(app, true, 7, 6));
+		addPiece(new Rook(app, true, 7, 7));
 		addPiece(new Rook(app, false, 0, 0));
 		addPiece(new Knight(app, false, 0, 1));
 		addPiece(new Bishop(app, false, 0, 2));
@@ -67,6 +66,7 @@ public class Board {
 		addPiece(new Bishop(app, false, 0, 5));
 		addPiece(new Knight(app, false, 0, 6));
 		addPiece(new Rook(app, false, 0, 7));
+		resize();
 	}
 
 	public void update() {

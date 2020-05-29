@@ -19,7 +19,6 @@ public class Assets {
             bishopW = ImageIO.read(new FileInputStream("assets/bishopw.png"));
             queenW = ImageIO.read(new FileInputStream("assets/queenw.png"));
             kingW = ImageIO.read(new FileInputStream("assets/kingw.png"));
-
             pawnB = ImageIO.read(new FileInputStream("assets/pawnb.png"));
             knightB = ImageIO.read(new FileInputStream("assets/knightb.png"));
             rookB = ImageIO.read(new FileInputStream("assets/rookb.png"));

@@ -61,8 +61,11 @@ public class Application {
 
 		// BS creation
 		canvas.createBufferStrategy(3);
+	}
 
-		// resize
+	protected void resize() {}
+
+	protected void initrz() {
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent componentEvent) {
 				resize();
@@ -109,8 +112,6 @@ public class Application {
 		bs.show();
 		g.dispose();
 	}
-
-	protected void resize() {}
 	
 	protected void stop() {
 		running = false;

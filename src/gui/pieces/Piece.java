@@ -1,8 +1,8 @@
 package gui.pieces;
 
-import data.RC;
+import game.data.RC;
 import main.Chess;
-import game.Move;
+import game.gen.Validate;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -14,7 +14,7 @@ public abstract class Piece {
             BISHOP = 3, QUEEN = 4, KING = 5;
 
     protected Chess app;
-    protected Move move;
+    protected Validate move;
     protected int id;
     protected RC pos;
     protected boolean first;
@@ -31,13 +31,12 @@ public abstract class Piece {
     }
 
     public void update() {
-        /*
         double len = app.getBoard().getLen();
         double pieceLen = len * app.getBoard().getPieceLen();
         int dmx = app.getMouse().dmx;
         int dmy = app.getMouse().dmy;
-        boolean isTurn = app.getBoard().getPosition().getTurn() == first;
-
+        // boolean isTurn = app.getBoard().getPosition().getTurn() == first;
+        /*
         if(pieceSelected && !app.getMouse().left()) {
             pieceSelected = false;
             app.getBoard().setSelected(false, null);
@@ -46,12 +45,14 @@ public abstract class Piece {
             int nc = (int)((dmx - tlc.x) / len);
             app.getBoard().getPosition().getMove().move(this, new RC(nr, nc));
         }
-
+        */
         if(pieceSelected) {
+            /*
             bounds.x = (int)(dmx - pieceLen / 2);
             bounds.y = (int)(dmy - pieceLen / 2);
             bounds.width = (int)pieceLen;
             bounds.height = (int)pieceLen;
+             */
         } else {
             Point tlc = app.getBoard().getTLC();
             double pieceOffset = (len - pieceLen) / 2;
@@ -60,8 +61,10 @@ public abstract class Piece {
             bounds.width = (int)pieceLen;
             bounds.height = (int)pieceLen;
 
+            /*
             pieceSelected = isTurn && !app.getBoard().isSelected() &&
                     app.getMouse().left() && bounds.contains(dmx, dmy);
+
 
             // Not DONE:
             if(app.getBoard().getPosition().isMateFlag()) {
@@ -75,9 +78,8 @@ public abstract class Piece {
                     app.getBoard().setSelected(true, this);
                 }
             }
+             */
         }
-
-         */
     }
 
     public void render(Graphics g, BufferedImage bi) {
