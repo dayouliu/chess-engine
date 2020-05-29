@@ -1,8 +1,9 @@
 package main;
 
-import board.Board;
-import io.Keys;
-import io.Mouse;
+import gui.Assets;
+import gui.board.Board;
+import gui.io.Keys;
+import gui.io.Mouse;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,27 +13,24 @@ import java.awt.image.BufferStrategy;
 
 public class Application {
 
-	private boolean running;
+	protected boolean running;
 
-	private JFrame frame;
-	private Canvas canvas;
-	private int initWidth = 600, initHeight = 600;
+	protected JFrame frame;
+	protected Canvas canvas;
+	protected int initWidth = 600, initHeight = 600;
 
-	private BufferStrategy bs;
-	private Graphics g;
+	protected BufferStrategy bs;
+	protected Graphics g;
 
-	private Keys keys;
-	private Mouse mouse;
+	protected Keys keys;
+	protected Mouse mouse;
 
-	private Board board;
-	private Assets assets;
-
-	private void start() {
+	protected void start() {
 		running = true;
 		run();
 	}
 	
-	private void init() {
+	protected void init() {
 		// Frame creation
 		frame = new JFrame("DY Chess Engine");
 		frame.setSize(initWidth, initHeight);
@@ -64,12 +62,7 @@ public class Application {
 		// BS creation
 		canvas.createBufferStrategy(3);
 
-		// Game creation
-		assets = new Assets();
-		board = new Board(this);
-		board.init();
-
-		// Resize
+		// resize
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent componentEvent) {
 				resize();
@@ -77,12 +70,12 @@ public class Application {
 		});
 	}
 
-	private double previousTime = System.currentTimeMillis();
-	private double lagTime = 0.000;
-	private int fpsCap = 60;
-	private double timestep = 1000.000 / fpsCap;
+	protected double previousTime = System.currentTimeMillis();
+	protected double lagTime = 0.000;
+	protected int fpsCap = 60;
+	protected double timestep = 1000.000 / fpsCap;
 
-	private void run() {
+	protected void run() {
 		init();
 		while(running) {
 			double currentTime = System.currentTimeMillis();
@@ -91,9 +84,9 @@ public class Application {
 				previousTime = currentTime;
 				lagTime += elapsedTime;
 				while (lagTime > timestep) {
-					// Update start
+					// update start
 					update();
-					// Update end
+					// update end
 					lagTime -= timestep;
 				}
 				render();
@@ -102,26 +95,24 @@ public class Application {
 		stop();
 	}
 
-	private void update() {
-		board.update();
-	}
+	protected void update() {}
+
+	protected void render(Graphics g) {}
 	
-	private void render() {
+	protected void render() {
 		bs = canvas.getBufferStrategy();
 		g = bs.getDrawGraphics();
 		g.clearRect(0, 0, getCanvasWidth(), getCanvasHeight());
 		// Render start
-		board.render(g);
+		render(g);
 		// Render end
 		bs.show();
 		g.dispose();
 	}
 
-	private void resize() {
-		board.resize();
-	}
+	protected void resize() {}
 	
-	private void stop() {
+	protected void stop() {
 		running = false;
 	}
 
@@ -149,16 +140,4 @@ public class Application {
 		return mouse;
 	}
 
-	public Assets getAssets() {
-		return assets;
-	}
-
-	public Board getBoard() {
-		return board;
-	}
-
-	public static void main(String[] args) {
-		new Application().start();
-	}
-	
 }

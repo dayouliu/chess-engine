@@ -1,13 +1,13 @@
-package piece;
+package gui.pieces;
 
-import main.Application;
-import main.Assets;
+import main.Chess;
+import gui.Assets;
 
 import java.awt.*;
 
 public class Rook extends Piece {
 
-    public Rook(Application app, boolean first, int r, int c) {
+    public Rook(Chess app, boolean first, int r, int c) {
         super(app, 2, first, r, c);
     }
 

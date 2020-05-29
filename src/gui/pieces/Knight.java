@@ -1,13 +1,13 @@
-package piece;
+package gui.pieces;
 
-import main.Application;
-import main.Assets;
+import main.Chess;
+import gui.Assets;
 
 import java.awt.*;
 
 public class Knight extends Piece {
 
-    public Knight(Application app, boolean first, int r, int c) {
+    public Knight(Chess app, boolean first, int r, int c) {
         super(app, 1, first, r, c);
     }
 

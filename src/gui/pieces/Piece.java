@@ -1,8 +1,8 @@
-package piece;
+package gui.pieces;
 
-import datastruct.RC;
-import main.Application;
-import manager.Movement;
+import data.RC;
+import main.Chess;
+import game.Move;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -13,8 +13,8 @@ public abstract class Piece {
             PAWN = 0, KNIGHT = 1, ROOK = 2,
             BISHOP = 3, QUEEN = 4, KING = 5;
 
-    protected Application app;
-    protected Movement movement;
+    protected Chess app;
+    protected Move move;
     protected int id;
     protected RC pos;
     protected boolean first;
@@ -23,7 +23,7 @@ public abstract class Piece {
     protected Rectangle bounds = new Rectangle();
     protected boolean pieceSelected = false;
 
-    public Piece(Application app, int id, boolean first, int r, int c) {
+    public Piece(Chess app, int id, boolean first, int r, int c) {
         this.app = app;
         this.id = id;
         this.first = first;
@@ -31,19 +31,20 @@ public abstract class Piece {
     }
 
     public void update() {
+        /*
         double len = app.getBoard().getLen();
         double pieceLen = len * app.getBoard().getPieceLen();
         int dmx = app.getMouse().dmx;
         int dmy = app.getMouse().dmy;
-        boolean isTurn = app.getBoard().getManager().getTurn() == first;
+        boolean isTurn = app.getBoard().getPosition().getTurn() == first;
 
         if(pieceSelected && !app.getMouse().left()) {
             pieceSelected = false;
-            app.getBoard().getManager().setSelected(false, null);
+            app.getBoard().setSelected(false, null);
             Point tlc = app.getBoard().getTLC();
             int nr = (int)((dmy - tlc.y) / len);
             int nc = (int)((dmx - tlc.x) / len);
-            app.getBoard().getManager().getMovement().move(this, new RC(nr, nc));
+            app.getBoard().getPosition().getMove().move(this, new RC(nr, nc));
         }
 
         if(pieceSelected) {
@@ -59,22 +60,24 @@ public abstract class Piece {
             bounds.width = (int)pieceLen;
             bounds.height = (int)pieceLen;
 
-            pieceSelected = isTurn && !app.getBoard().getManager().isSelected() &&
+            pieceSelected = isTurn && !app.getBoard().isSelected() &&
                     app.getMouse().left() && bounds.contains(dmx, dmy);
 
             // Not DONE:
-            if(app.getBoard().getManager().isMateFlag()) {
+            if(app.getBoard().getPosition().isMateFlag()) {
 
-            } else if(app.getBoard().getManager().isCheckFlag()) {
+            } else if(app.getBoard().getPosition().isCheckFlag()) {
                 if(pieceSelected && id == Piece.KING) {
-                    app.getBoard().getManager().setSelected(true, this);
+                    app.getBoard().setSelected(true, this);
                 }
             } else {
                 if (pieceSelected) {
-                    app.getBoard().getManager().setSelected(true, this);
+                    app.getBoard().setSelected(true, this);
                 }
             }
         }
+
+         */
     }
 
     public void render(Graphics g, BufferedImage bi) {

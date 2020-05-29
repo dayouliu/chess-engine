@@ -1,4 +1,4 @@
-package io;
+package gui.io;
 
 import main.Application;
 

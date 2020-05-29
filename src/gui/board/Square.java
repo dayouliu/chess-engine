@@ -1,4 +1,4 @@
-package board;
+package gui.board;
 
 import main.Application;
 

@@ -1,4 +1,4 @@
-package io;
+package gui.io;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 

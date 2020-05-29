@@ -1,30 +1,87 @@
-package manager;
+package game;
 
-import datastruct.RC;
+import data.RC;
 import main.Application;
-import piece.Piece;
-import piece.Queen;
+import gui.pieces.Piece;
+import gui.pieces.Queen;
 
-public class Movement {
+public class Move {
 
-    private Application app;
-    private int irow, icol;
+    private int row = 8, col = 8;
 
-    private Piece[][] checkPieces;
-    private RC[][] checkAttack;
-
-    public Movement(Application app) {
-        this.app = app;
+    private int dr(RC s, RC e) {
+        return e.r - s.r;
     }
 
-    public void init() {
-        this.irow = app.getBoard().getRow() - 1;
-        this.icol = app.getBoard().getCol() - 1;
-        checkPieces = new Piece[irow+1][icol+1];
-        checkAttack = new RC[irow+1][icol+1];
+    private int dc(RC s, RC e) {
+        return e.c - s.c;
     }
 
-    public void move(Piece piece, RC e) {
+    private boolean nomove(RC s, RC e) {
+        return s.equals(e);
+    }
+
+    public boolean bounded(RC e) {
+        return  0 <= e.r && e.r < row && 0 <= e.c && e.c < col;
+    }
+
+    public boolean empty(int[][] board, RC e) {
+        return board[e.r][e.c] == 0;
+    }
+
+    private boolean precheck(RC s, RC e) {
+        return getPiece(s) != null && !nomove(s, e) && bounded(e);
+    }
+
+    private boolean line(RC s, RC e) {
+        return dr(s, e) == 0 || dc(s, e) == 0;
+    }
+
+    private boolean diagonal(RC s, RC e) {
+        return Math.abs(dr(s, e)) == Math.abs(dc(s, e));
+    }
+
+    private int dir(int n) {
+        if(n < 0) return -1; if(n > 0) return 1; return 0;
+    }
+
+    private boolean clear(int[][] board, RC s, RC e, int dr, int dc, boolean take) {
+        int cdr = dr(s, e);
+        int cdc = dc(s, e);
+        RC step = new RC(s.r+cdr, s.c+cdc);
+        while(bounded(step)) {
+            if(step.equals(e)) {
+                if(take && empty(board, e)) return true;
+                else if(!take) return true;
+                else return false;
+            }
+            step = new RC(step.r+cdr, step.c+cdc);
+        }
+        return false;
+    }
+
+    private boolean clearLine(int[][] board, RC s, RC e) {
+        return line(s, e) && clear(board, s, e, dir(dr(s, e)), dir(dc(s, e)), true);
+    }
+
+    private boolean clearDiagonal(int[][] board, RC s, RC e) {
+        return diagonal(s, e) && clear(board, s, e, dir(dr(s, e)), dir(dc(s, e)), true);
+    }
+
+    private boolean isPawnMove(int[][] board, RC s, RC e) {
+        int pdr = dr(s, e);
+        int pdc = dc(s, e);
+        boolean first = getPiece(s).isFirst();
+        return pawnTake(s, e) || (pdc == 0 && clear(board, s, e, pdr, 0, false) &&
+                ((first && (pdr == -1 || (pdr == -2 && s.r == row - 1))) ||
+                        (!first && (pdr == 1 || (pdr == 2 && s.r == 1)))));
+    }
+
+
+    public void move(RC s, RC e) {
+        /*
+        Piece[][] checkPieces = new Piece[irow+1][icol+1];
+        RC[][] checkAttack = new RC[irow+1][icol+1];
         if(validMove(piece, e)) {
             RC s = piece.getPos();
             // Take
@@ -41,11 +98,13 @@ public class Movement {
             check();
             mate();
             // Next turn
-            app.getBoard().getManager().turn();
+            app.getBoard().getPosition().turn();
         }
+
+         */
     }
 
-    public boolean validMove(Piece piece, RC e) {
+    public boolean validMove(int piece, RC e) {
         RC s = piece.getPos();
         int id = piece.getId();
         if(prelimCheck(s, e)) {
@@ -66,94 +125,14 @@ public class Movement {
         return false;
     }
 
-    // Spacing moves
 
-    private int dr(RC s, RC e) {
-        return e.r - s.r;
-    }
 
-    private int dc(RC s, RC e) {
-        return e.c - s.c;
-    }
 
-    private boolean noMove(RC s, RC e) {
-        return s.equals(e);
-    }
 
-    public boolean inBounds(RC e) {
-        return  0 <= e.r && e.r < app.getBoard().getRow() &&
-                0 <= e.c && e.c < app.getBoard().getCol();
-    }
 
-    public boolean isEmpty(RC e) {
-        return checkPieces[e.r][e.c] == null;
-    }
 
-    private boolean prelimCheck(RC s, RC e) {
-        return getPiece(s) != null && !noMove(s, e) && inBounds(e);
-    }
 
-    private boolean isLineMove(RC s, RC e) {
-        return dr(s, e) == 0 || dc(s, e) == 0;
-    }
 
-    private boolean isDiagMove(RC s, RC e) {
-        return Math.abs(dr(s, e)) == Math.abs(dc(s, e));
-    }
-
-    private boolean isClear(RC s, RC e, int dr, int dc, boolean take) {
-        int cdr = dr(s, e);
-        int cdc = dc(s, e);
-        int steps = 0;
-        if(dr == 0 && dc == 0) {
-            return false;
-        } else if(dc == 0) {
-            if(s.r != e.r && cdr % dr != 0)
-                return false;
-            steps = Math.abs(cdr / dr);
-        } else if(dr == 0) {
-            if(s.c != e.c && cdc % dc != 0)
-                return false;
-            steps = Math.abs(cdc / dc);
-        } else {
-            if(cdr % dr != 0 || cdc % dc != 0 || Math.abs(cdr / dr) != Math.abs(cdc / dc))
-                return false;
-            steps = Math.abs(cdr / dr);
-        }
-        for(int i = 1; i <= steps; i++) {
-            if(take && i == steps) {
-                return moveTake(s, e);
-            }
-            if(!isEmpty(new RC(s.r + dr * i, s.c + dc * i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private int getDir(int n) {
-        if(n < 0) return -1;
-        if(n > 0) return 1;
-        return 0;
-    }
-
-    private boolean isClearLine(RC s, RC e) {
-        return isLineMove(s, e) && isClear(s, e, getDir(dr(s, e)), getDir(dc(s, e)), true);
-    }
-
-    private boolean isClearDiag(RC s, RC e) {
-        return isDiagMove(s, e) && isClear(s, e, getDir(dr(s, e)), getDir(dc(s, e)), true);
-    }
-
-    private boolean isPawnMove(RC s, RC e) {
-        int pdr = dr(s, e);
-        int pdc = dc(s, e);
-        boolean first = getPiece(s).isFirst();
-        return pawnTake(s, e) ||
-                (pdc == 0 && isClear(s, e, pdr, 0, false) &&
-                ((first && (pdr == -1 || (pdr == -2 && s.r == irow - 1))) ||
-                (!first && (pdr == 1 || (pdr == 2 && s.r == 1)))));
-    }
 
     private boolean isKnightMove(RC s, RC e) {
         int kdr = Math.abs(dr(s, e));
@@ -182,7 +161,7 @@ public class Movement {
 
     private void take(RC e) {
         if(getPiece(e) != null) {
-            app.getBoard().getManager().remove(getPiece(e));
+            app.getBoard().getPosition().remove(getPiece(e));
         }
     }
 
@@ -210,24 +189,16 @@ public class Movement {
         boolean canPromote = piece.getId() == Piece.PAWN &&
                              ((first && e.r == 0) || (!first && e.r == irow));
         if(canPromote) {
-            app.getBoard().getManager().remove(piece);
-            app.getBoard().getManager().add(new Queen(app, first, e.r, e.c));
+            app.getBoard().getPosition().remove(piece);
+            app.getBoard().add(new Queen(app, first, e.r, e.c));
         }
     }
 
     // Attack moves
 
-    private void attackInit() {
-        for(int i = 0; i <= irow; i++) {
-            for(int j = 0; j <= icol; j++) {
-                checkAttack[i][j] = new RC(0, 0);
-            }
-        }
-    }
-
     private void attack() {
         attackInit();
-        for(Piece piece : app.getBoard().getManager().getPieces()) {
+        for(Piece piece : app.getBoard().getPieces()) {
             RC s = piece.getPos();
             int id = piece.getId();
             if (id == Piece.PAWN) {
@@ -244,24 +215,6 @@ public class Movement {
                 attackKing(s);
             }
         }
-        // Testing
-        /*
-        System.out.println("White");
-        for(int i  = 0; i < 8; i++) {
-            for(int j = 0; j < 8; j++) {
-                System.out.print(checkAttack[i][j].r + "\t");
-            }
-            System.out.println();
-        }
-        System.out.println("Black");
-        for(int i  = 0; i < 8; i++) {
-            for(int j = 0; j < 8; j++) {
-                System.out.print(checkAttack[i][j].c + "\t");
-            }
-            System.out.println();
-        }
-        System.out.println();
-        */
     }
 
     private boolean isAttacked(RC r, boolean first) {
@@ -353,20 +306,20 @@ public class Movement {
     // Checking and mating moves
 
     private void check() {
-        boolean turn = app.getBoard().getManager().getTurn();
-        Piece king = turn ? app.getBoard().getManager().getKingB() :
-                            app.getBoard().getManager().getKingW();
-        app.getBoard().getManager().setCheckFlag(isAttacked(king.getPos(), turn));
+        boolean turn = app.getBoard().getPosition().getTurn();
+        Piece king = turn ? app.getBoard().getPosition().getKingB() :
+                            app.getBoard().getPosition().getKingW();
+        app.getBoard().getPosition().setCheckFlag(isAttacked(king.getPos(), turn));
     }
 
     private int[] alldirR = {-1, -1, -1, 0, 0, 1, 1, 1};
     private int[] alldirC = {-1, 0, 1, -1, 1, -1, 0, 1};
 
     private void mate() {
-        if(app.getBoard().getManager().isCheckFlag()) {
-            boolean turn = app.getBoard().getManager().getTurn();
-            Piece king = turn ? app.getBoard().getManager().getKingB() :
-                    app.getBoard().getManager().getKingW();
+        if(app.getBoard().getPosition().isCheckFlag()) {
+            boolean turn = app.getBoard().getPosition().getTurn();
+            Piece king = turn ? app.getBoard().getPosition().getKingB() :
+                    app.getBoard().getPosition().getKingW();
             RC s = king.getPos();
             for (int i = 0; i < 8; i++) {
                 RC e = new RC(s.r + alldirR[i], s.c + alldirC[i]);
@@ -376,7 +329,7 @@ public class Movement {
                     }
                 }
             }
-            app.getBoard().getManager().setMateFlag(true);
+            app.getBoard().getPosition().setMateFlag(true);
         }
     }
 

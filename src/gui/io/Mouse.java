@@ -1,6 +1,5 @@
-package io;
+package gui.io;
 
-import java.awt.*;
 import java.awt.event.*;
 
 public class Mouse implements MouseListener, MouseMotionListener, MouseWheelListener{

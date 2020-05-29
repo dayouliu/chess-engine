@@ -1,13 +1,13 @@
-package piece;
+package gui.pieces;
 
-import main.Application;
-import main.Assets;
+import main.Chess;
+import gui.Assets;
 
 import java.awt.*;
 
 public class Bishop extends Piece {
 
-    public Bishop(Application app, boolean first, int r, int c) {
+    public Bishop(Chess app, boolean first, int r, int c) {
         super(app, 3, first, r, c);
     }
 
