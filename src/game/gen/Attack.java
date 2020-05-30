@@ -34,11 +34,11 @@ public class Attack {
 
     private void genAttackPawn(int[][] a, int[][] b, RC s) {
         if(Util.white(b, s)) {
-            genAttack(a, b, s, -1, 1, 1);
-            genAttack(a, b, s, 1, 1, 1);
-        } else {
             genAttack(a, b, s, -1, -1, 1);
+            genAttack(a, b, s, -1, 1, 1);
+        } else {
             genAttack(a, b, s, 1, -1, 1);
+            genAttack(a, b, s, 1, 1, 1);
         }
     }
 
@@ -77,27 +77,28 @@ public class Attack {
         genAttack(a, b, s, 1, 1, 1);
     }
 
-    public int[][] genAttackArr(State state, boolean turn) {
+    public int[][] genAttackArr(State state, boolean white) {
         int[][] a = new int[Util.row][Util.col];
-        int i1 = !turn ? 1 : 7;
-        int i2 = !turn ? 6 : 12;
-        for(int i = i1; i <= i2; ++i) {
-            int id = i;
-            RC p = state.pieces[i];
-            int[][] b = state.board;
-            if(p == null) continue;
-            if (id == State.PAWNW || id == State.PAWNB) {
-                genAttackPawn(a, b, p);
-            } else if (id == State.KNIGHTW || id == State.KNIGHTB) {
-                genAttackKnight(a, b, p);
-            } else if (id == State.BISHOPW || id == State.BISHOPB) {
-                genAttackBishop(a, b, p);
-            } else if (id == State.ROOKW || id == State.ROOKB) {
-                genAttackRook(a, b, p);
-            } else if (id == State.QUEENW || id == State.QUEENB) {
-                genAttackQueen(a, b, p);
-            } else if (id == State.KINGW || id == State.KINGB) {
-                genAttackKing(a, b, p);
+        int[][] b = state.board;
+        for(int i = 0; i < Util.row; ++i) {
+            for(int j = 0; j < Util.col; ++j) {
+                int id = b[i][j];
+                RC p = new RC(i, j);
+                if(id != 0 && Util.white(b, p) == white) {
+                    if (id == State.PAWNW || id == State.PAWNB) {
+                        genAttackPawn(a, b, p);
+                    } else if (id == State.KNIGHTW || id == State.KNIGHTB) {
+                        genAttackKnight(a, b, p);
+                    } else if (id == State.BISHOPW || id == State.BISHOPB) {
+                        genAttackBishop(a, b, p);
+                    } else if (id == State.ROOKW || id == State.ROOKB) {
+                        genAttackRook(a, b, p);
+                    } else if (id == State.QUEENW || id == State.QUEENB) {
+                        genAttackQueen(a, b, p);
+                    } else if (id == State.KINGW || id == State.KINGB) {
+                        genAttackKing(a, b, p);
+                    }
+                }
             }
         }
         return a;

@@ -78,8 +78,9 @@ public class Application {
 	protected double timestep = 1000000000.0 / fpscap;
 	protected double delta = 0;
 
-	protected double timer = System.currentTimeMillis();
+	protected long timer = System.currentTimeMillis();
 	protected double frames = 0;
+	protected double fps = 0;
 
 	protected void run() {
 		init();
@@ -97,11 +98,11 @@ public class Application {
 				++frames;
 			}
 
-			double cur = System.currentTimeMillis();
-			double diff = cur - timer;
+			long cur = System.currentTimeMillis();
+			long diff = cur - timer;
 			if(diff > 1000) {
 				timer = cur;
-				System.out.println(frames / (diff / 1000));
+				fps = frames / ((double)diff / 1000);
 				frames = 0;
 			}
 		}
@@ -110,7 +111,9 @@ public class Application {
 
 	protected void update() {}
 
-	protected void render(Graphics g) {}
+	protected void render(Graphics g) {
+		g.drawString(Double.toString(fps),20, 20);
+	}
 	
 	protected void render() {
 		bs = canvas.getBufferStrategy();

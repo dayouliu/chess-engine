@@ -21,7 +21,11 @@ public class Util {
     }
 
     public static boolean white(int[][] board, RC p) {
-        return board[p.r][p.c] <= 6;
+        return 1 <= board[p.r][p.c] && board[p.r][p.c] <= 6;
+    }
+
+    public static boolean black(int[][] board, RC p) {
+        return 7 <= board[p.r][p.c] && board[p.r][p.c] <= 12;
     }
 
     public static boolean opposite(int[][] board, RC s, RC e) {
@@ -38,6 +42,15 @@ public class Util {
 
     public static boolean empty(int[][] board, RC e) {
         return board[e.r][e.c] == 0;
+    }
+
+    public static void print(int[][] arr) {
+        for(int i = 0; i < arr.length; ++i) {
+            for(int j = 0; j < arr[i].length; ++j) {
+                System.out.print(arr[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 
 }

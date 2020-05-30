@@ -39,6 +39,7 @@ public class Chess extends Application {
         if(validate.validateMove(state, s, e)) {
             move.move(state, s, e);
             board.move(s, e);
+            state.turn();
         }
     }
 
@@ -47,6 +48,7 @@ public class Chess extends Application {
     }
 
     protected void render(Graphics g) {
+        super.render(g);
         board.render(g);
     }
 
