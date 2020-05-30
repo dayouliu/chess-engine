@@ -73,26 +73,36 @@ public class Application {
 		});
 	}
 
-	protected double previousTime = System.currentTimeMillis();
-	protected double lagTime = 0.000;
-	protected int fpsCap = 60;
-	protected double timestep = 1000.000 / fpsCap;
+	protected long previous = System.nanoTime();
+	protected double fpscap = 60.0;
+	protected double timestep = 1000000000.0 / fpscap;
+	protected double delta = 0;
+
+	protected double timer = System.currentTimeMillis();
+	protected double frames = 0;
 
 	protected void run() {
 		init();
 		while(running) {
-			double currentTime = System.currentTimeMillis();
-			double elapsedTime = currentTime - previousTime;
-			if(elapsedTime >= timestep) {
-				previousTime = currentTime;
-				lagTime += elapsedTime;
-				while (lagTime > timestep) {
-					// update start
+			long current = System.nanoTime();
+			long elapsed = current - previous;
+			if(elapsed > timestep) {
+				delta += ((double) elapsed) / timestep;
+				previous = current;
+				while (delta >= 1) {
 					update();
-					// update end
-					lagTime -= timestep;
+					delta -= 1;
 				}
 				render();
+				++frames;
+			}
+
+			double cur = System.currentTimeMillis();
+			double diff = cur - timer;
+			if(diff > 1000) {
+				timer = cur;
+				System.out.println(frames / (diff / 1000));
+				frames = 0;
 			}
 		}
 		stop();

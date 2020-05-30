@@ -1,8 +1,22 @@
 package game.gen;
 
+import game.data.RC;
+import game.data.State;
+
 public class Move {
+
+    public void move(State state, RC s, RC e) {
+        state.move(s, e);
+    }
+
     /*
     // Take moves
+
+    private void take(RC e) {
+        if(getPiece(e) != null) {
+            app.getBoard().getPosition().remove(getPiece(e));
+        }
+    }
 
     public void move(RC s, RC e) {
 
@@ -28,16 +42,6 @@ public class Move {
         }
 
     }
-
-    private void take(RC e) {
-        if(getPiece(e) != null) {
-            app.getBoard().getPosition().remove(getPiece(e));
-        }
-    }
-
-
-
-
 
     // Promotion Moves
 

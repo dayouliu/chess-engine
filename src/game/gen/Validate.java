@@ -120,12 +120,15 @@ public class Validate {
             }
             // check pin validity
             if(valid) {
-                int[][] a = attack.genAttackArr(state.move(s, e), state.turn);
+                State next = state.copy();
+                next.move(s, e);
+                int[][] a = attack.genAttackArr(next, state.turn);
                 int kid = state.turn ? 6 : 12;
                 RC king = state.pieces[kid];
                 if(a[king.r][king.c] > 0) valid = false;
             }
         }
+        System.out.println(valid);
         return valid;
     }
 

@@ -7,24 +7,22 @@ import java.io.IOException;
 
 public class Assets {
 
-    public static BufferedImage
-            pawnw, knightW, rookW, bishopW, queenW, kingW,
-            pawnB, knightB, rookB, bishopB, queenB, kingB;
+    public static BufferedImage[] pieces = new BufferedImage[13];
 
     public Assets() {
         try {
-            pawnw = ImageIO.read(new FileInputStream("assets/pawnw.png"));
-            knightW = ImageIO.read(new FileInputStream("assets/knightw.png"));
-            rookW = ImageIO.read(new FileInputStream("assets/rookw.png"));
-            bishopW = ImageIO.read(new FileInputStream("assets/bishopw.png"));
-            queenW = ImageIO.read(new FileInputStream("assets/queenw.png"));
-            kingW = ImageIO.read(new FileInputStream("assets/kingw.png"));
-            pawnB = ImageIO.read(new FileInputStream("assets/pawnb.png"));
-            knightB = ImageIO.read(new FileInputStream("assets/knightb.png"));
-            rookB = ImageIO.read(new FileInputStream("assets/rookb.png"));
-            bishopB = ImageIO.read(new FileInputStream("assets/bishopb.png"));
-            queenB = ImageIO.read(new FileInputStream("assets/queenb.png"));
-            kingB = ImageIO.read(new FileInputStream("assets/kingb.png"));
+            pieces[1] = ImageIO.read(new FileInputStream("assets/pawnw.png"));
+            pieces[2] = ImageIO.read(new FileInputStream("assets/knightw.png"));
+            pieces[3] = ImageIO.read(new FileInputStream("assets/bishopw.png"));
+            pieces[4] = ImageIO.read(new FileInputStream("assets/rookw.png"));
+            pieces[5] = ImageIO.read(new FileInputStream("assets/queenw.png"));
+            pieces[6] = ImageIO.read(new FileInputStream("assets/kingw.png"));
+            pieces[7] = ImageIO.read(new FileInputStream("assets/pawnb.png"));
+            pieces[8] = ImageIO.read(new FileInputStream("assets/knightb.png"));
+            pieces[9] = ImageIO.read(new FileInputStream("assets/bishopb.png"));
+            pieces[10] = ImageIO.read(new FileInputStream("assets/rookb.png"));
+            pieces[11] = ImageIO.read(new FileInputStream("assets/queenb.png"));
+            pieces[12] = ImageIO.read(new FileInputStream("assets/kingb.png"));
         } catch(IOException e) {
             e.printStackTrace();
             System.exit(1);

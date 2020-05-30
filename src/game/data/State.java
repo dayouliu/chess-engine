@@ -28,8 +28,22 @@ public class State {
     public int[][] board;
 
     public State() {
-        board = new int[8][8];
-        pieces = new RC[12];
+        int[][] b = {{10, 8, 9, 11, 12, 9, 8, 10},
+                     {7, 7, 7, 7, 7, 7, 7, 7},
+                     {0, 0, 0, 0, 0, 0, 0, 0},
+                     {0, 0, 0, 0, 0, 0, 0, 0},
+                     {0, 0, 0, 0, 0, 0, 0, 0},
+                     {0, 0, 0, 0, 0, 0, 0, 0},
+                     {1, 1, 1, 1, 1, 1, 1, 1},
+                     {4, 2, 3, 5, 6, 3, 2, 4}};
+        board = b;
+        pieces = new RC[13];
+        for(int i = 0; i < 8; ++i) {
+            for(int j = 0; j < 8; ++j) {
+                int id = board[i][j];
+                if(id > 0) pieces[id] = new RC(i, j);
+            }
+        }
     }
 
     public State copy() {
@@ -44,15 +58,13 @@ public class State {
         return state;
     }
 
-    public State move(RC s, RC e) {
-        State state = copy();
-        int sid = state.board[s.r][s.c];
-        int eid = state.board[e.r][e.c];
-        state.board[s.r][s.c] = 0;
-        state.board[e.r][e.c] = sid;
-        state.pieces[sid] = e;
-        state.pieces[eid] = null;
-        return state;
+    public void move(RC s, RC e) {
+        int sid = board[s.r][s.c];
+        int eid = board[e.r][e.c];
+        board[s.r][s.c] = 0;
+        board[e.r][e.c] = sid;
+        pieces[sid] = e;
+        pieces[eid] = null;
     }
 
 }

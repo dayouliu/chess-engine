@@ -1,32 +1,27 @@
-package gui.pieces;
+package gui.board;
 
 import game.data.RC;
+import gui.Assets;
 import main.Chess;
 import game.gen.Validate;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public abstract class Piece {
-
-    public static int
-            PAWN = 0, KNIGHT = 1, ROOK = 2,
-            BISHOP = 3, QUEEN = 4, KING = 5;
+public class Piece {
 
     protected Chess app;
     protected Validate move;
     protected int id;
     protected RC pos;
-    protected boolean first;
     protected boolean remove = false;
 
     protected Rectangle bounds = new Rectangle();
     protected boolean pieceSelected = false;
 
-    public Piece(Chess app, int id, boolean first, int r, int c) {
+    public Piece(Chess app, int id, int r, int c) {
         this.app = app;
         this.id = id;
-        this.first = first;
         this.pos = new RC(r,  c);
     }
 
@@ -35,24 +30,23 @@ public abstract class Piece {
         double pieceLen = len * app.getBoard().getPieceLen();
         int dmx = app.getMouse().dmx;
         int dmy = app.getMouse().dmy;
-        // boolean isTurn = app.getBoard().getPosition().getTurn() == first;
-        /*
+        boolean isTurn = true;
+
         if(pieceSelected && !app.getMouse().left()) {
             pieceSelected = false;
-            app.getBoard().setSelected(false, null);
+            app.getBoard().setSelected(null);
             Point tlc = app.getBoard().getTLC();
             int nr = (int)((dmy - tlc.y) / len);
             int nc = (int)((dmx - tlc.x) / len);
-            app.getBoard().getPosition().getMove().move(this, new RC(nr, nc));
+            RC e = new RC(nr, nc);
+            app.move(pos, e);
         }
-        */
+
         if(pieceSelected) {
-            /*
             bounds.x = (int)(dmx - pieceLen / 2);
             bounds.y = (int)(dmy - pieceLen / 2);
             bounds.width = (int)pieceLen;
             bounds.height = (int)pieceLen;
-             */
         } else {
             Point tlc = app.getBoard().getTLC();
             double pieceOffset = (len - pieceLen) / 2;
@@ -61,12 +55,13 @@ public abstract class Piece {
             bounds.width = (int)pieceLen;
             bounds.height = (int)pieceLen;
 
-            /*
-            pieceSelected = isTurn && !app.getBoard().isSelected() &&
+            pieceSelected = !app.getBoard().isSelected() &&
                     app.getMouse().left() && bounds.contains(dmx, dmy);
 
-
-            // Not DONE:
+            if (pieceSelected) {
+                app.getBoard().setSelected(this);
+            }
+            /*
             if(app.getBoard().getPosition().isMateFlag()) {
 
             } else if(app.getBoard().getPosition().isCheckFlag()) {
@@ -74,32 +69,22 @@ public abstract class Piece {
                     app.getBoard().setSelected(true, this);
                 }
             } else {
-                if (pieceSelected) {
-                    app.getBoard().setSelected(true, this);
-                }
+
             }
              */
         }
     }
 
-    public void render(Graphics g, BufferedImage bi) {
-        g.drawImage(bi, bounds.x, bounds.y, bounds.width, bounds.height, null);
+    public void render(Graphics g) {
+        g.drawImage(Assets.pieces[id], bounds.x, bounds.y, bounds.width, bounds.height, null);
     }
 
-    public abstract void render(Graphics g);
-
     public String toString() {
-        if(this == null)
-            return "null";
-        return "" + id;
+        return (this == null) ? "null" : "" + id;
     }
 
     public int getId() {
         return id;
-    }
-
-    public boolean isFirst() {
-        return first;
     }
 
     public RC getPos() {
@@ -114,12 +99,12 @@ public abstract class Piece {
         return pieceSelected;
     }
 
-    public boolean getRemove() {
-        return remove;
+    public void remove() {
+        remove = true;
     }
 
-    public void setRemove() {
-        remove = true;
+    public boolean isRemove() {
+        return remove;
     }
 
 }

@@ -7,7 +7,7 @@ public class Test {
     public void init() {
         Attack attack = new Attack();
 
-        
+
     }
 
 }

@@ -1,7 +1,7 @@
 package gui.board;
 
 import game.data.RC;
-import gui.pieces.*;
+import game.data.State;
 import main.Chess;
 
 import java.awt.*;
@@ -19,9 +19,8 @@ public class Board {
 	
 	private Square[][] board;
 	private List<Piece> pieces = new ArrayList<Piece>();
-	private List<Piece> piecesAdd = new ArrayList<Piece>();
-	private boolean selected = false;
-	private Piece selectedPiece;
+	private List<Piece> piecesa = new ArrayList<Piece>();
+	private Piece selected;
 
 	public Board(Chess app) {
 		this.app = app;
@@ -41,47 +40,46 @@ public class Board {
 		tlc.y = (int) (centerY - (row / 2) * len);
 	}
 
-	public void addPiece(Piece piece) {
-		piecesAdd.add(piece);
-	}
-
-	public void init() {
-		for(int i = 0; i < row; i++) {
-			addPiece(new Pawn(app, true, row-2, i));
-			addPiece(new Pawn(app, false, 1, i));
-		}
-		addPiece(new Rook(app, true, 7, 0));
-		addPiece(new Knight(app, true, 7, 1));
-		addPiece(new Bishop(app, true, 7, 2));
-		addPiece(new Queen(app, true, 7, 3));
-		addPiece(new King(app, true, 7, 4));
-		addPiece(new Bishop(app, true, 7, 5));
-		addPiece(new Knight(app, true, 7, 6));
-		addPiece(new Rook(app, true, 7, 7));
-		addPiece(new Rook(app, false, 0, 0));
-		addPiece(new Knight(app, false, 0, 1));
-		addPiece(new Bishop(app, false, 0, 2));
-		addPiece(new Queen(app, false, 0, 3));
-		addPiece(new King(app, false, 0, 4));
-		addPiece(new Bishop(app, false, 0, 5));
-		addPiece(new Knight(app, false, 0, 6));
-		addPiece(new Rook(app, false, 0, 7));
+	public void init(State s) {
+		set(s);
 		resize();
 	}
 
-	public void update() {
-		List<Piece> piecesUpdate = new ArrayList<Piece>();
-		for(Piece piece : new ArrayList<Piece>(pieces)) {
-			piece.update();
-			if(!piece.getRemove()) {
-				piecesUpdate.add(piece);
+	public void set(State state) {
+		int[][] board = state.board;
+		for(int i = 0; i < row; ++i) {
+			for(int j = 0; j < col; ++j) {
+				int id = board[i][j];
+				if(id > 0) {
+					piecesa.add(new Piece(app, id, i, j));
+				}
 			}
 		}
-		for(Piece piece : piecesAdd) {
-			piecesUpdate.add(piece);
+	}
+
+	public void move(RC s, RC e) {
+		for(Piece p : pieces) {
+			if(p.pos.equals(e)) p.remove();
 		}
-		piecesAdd.clear();
-		pieces = piecesUpdate;
+		for(Piece p : pieces) {
+			if(p.pos.equals(s)) p.pos = e;
+		}
+	}
+
+	public void update() {
+		List<Piece> piecesu = new ArrayList<Piece>();
+		for(Piece piece : new ArrayList<Piece>(pieces)) {
+			piece.update();
+			if(!piece.isRemove()) {
+				piecesu.add(piece);
+			}
+		}
+		for(Piece piece : piecesa) {
+			piecesu.add(piece);
+		}
+		piecesa.clear();
+		pieces = piecesu;
+		for(Piece p : pieces) p.update();
 	}
 
 	public void render(Graphics g) {
@@ -95,8 +93,8 @@ public class Board {
 				piece.render(g);
 			}
 		}
-		if(selected && selectedPiece != null) {
-			selectedPiece.render(g);
+		if(selected != null) {
+			selected.render(g);
 		}
 	}
 
@@ -128,13 +126,12 @@ public class Board {
 		return pieces;
 	}
 
-	public void setSelected(boolean selected, Piece selectedPiece) {
+	public void setSelected(Piece selected) {
 		this.selected = selected;
-		this.selectedPiece = selectedPiece;
 	}
 
 	public boolean isSelected() {
-		return selected;
+		return selected != null;
 	}
 
 }
