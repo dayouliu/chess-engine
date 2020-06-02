@@ -13,6 +13,10 @@ public class RC {
         return r == o.r && c == o.c;
     }
 
+    public boolean equals(int x, int y) {
+        return r == x && c == y;
+    }
+
     public String toString() {
         return "(" + r + ", " + c + ")";
     }

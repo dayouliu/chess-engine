@@ -30,7 +30,6 @@ public class Piece {
         double pieceLen = len * app.getBoard().getPieceLen();
         int dmx = app.getMouse().dmx;
         int dmy = app.getMouse().dmy;
-        boolean isTurn = true;
 
         if(pieceSelected && !app.getMouse().left()) {
             pieceSelected = false;
@@ -54,24 +53,11 @@ public class Piece {
             bounds.y = (int)(tlc.y + pos.r * len + pieceOffset);
             bounds.width = (int)pieceLen;
             bounds.height = (int)pieceLen;
-
             pieceSelected = !app.getBoard().isSelected() &&
                     app.getMouse().left() && bounds.contains(dmx, dmy);
-
             if (pieceSelected) {
                 app.getBoard().setSelected(this);
             }
-            /*
-            if(app.getBoard().getPosition().isMateFlag()) {
-
-            } else if(app.getBoard().getPosition().isCheckFlag()) {
-                if(pieceSelected && id == Piece.KING) {
-                    app.getBoard().setSelected(true, this);
-                }
-            } else {
-
-            }
-             */
         }
     }
 

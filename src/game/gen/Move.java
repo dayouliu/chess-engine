@@ -6,7 +6,7 @@ import game.data.State;
 public class Move {
 
     public void move(State state, RC s, RC e) {
-        state.movei(s, e);
+        state.move(s, e);
     }
 
     /*

@@ -78,7 +78,7 @@ public class Application {
 	protected double timestep = 1000000000.0 / fpscap;
 	protected double delta = 0;
 
-	protected long timer = System.currentTimeMillis();
+	protected long timer = System.nanoTime();
 	protected double frames = 0;
 	protected double fps = 0;
 
@@ -87,7 +87,7 @@ public class Application {
 		while(running) {
 			long current = System.nanoTime();
 			long elapsed = current - previous;
-			if(elapsed > timestep) {
+			if(elapsed >= timestep) {
 				delta += ((double) elapsed) / timestep;
 				previous = current;
 				while (delta >= 1) {
@@ -98,11 +98,11 @@ public class Application {
 				++frames;
 			}
 
-			long cur = System.currentTimeMillis();
+			long cur = System.nanoTime();
 			long diff = cur - timer;
-			if(diff > 1000) {
+			if(diff > 1000000000) {
 				timer = cur;
-				fps = frames / ((double)diff / 1000);
+				fps = frames / ((double)diff / 1000000000);
 				frames = 0;
 			}
 		}

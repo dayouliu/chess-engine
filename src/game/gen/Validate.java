@@ -72,7 +72,7 @@ public class Validate {
         return attack[p.r][p.c] > 0;
     }
 
-    private boolean validatePawnMove(int[][] board, RC s, RC e) {
+    private boolean validatePawnMove(int[][] board, RC[] last, RC s, RC e) {
         int pdr = Util.dr(s, e);
         int pdc = Util.dc(s, e);
         boolean white = Util.white(board, s);
@@ -83,16 +83,24 @@ public class Validate {
         boolean b1 = b0 && pdr == 1;
         boolean w2 = w0 && Util.empty(board, new RC(s.r-2, s.c)) && pdr == -2 && s.r == 6;
         boolean b2 = b0 && Util.empty(board, new RC(s.r+2, s.c)) && pdr == 2 && s.r == 1;
-        /*
-        boolean enpassw0 = board[s.r-1][s.c] == State.PAWNB && s.r == 3
-        boolean enpassw1 =
-                enpassw0 && white && pdr == -1 && pdc == -1 && Util.empty(board, new RC(s.r-1, s.c-1));
-        boolean enpassw2 =
-                enpassw0 && white && pdr == -1 && pdc == 1 && Util.empty(board, new RC(s.r-1, s.c-1));
-                        ;
-                        
-         */
-        return take || w1 || w2 || b1 || b2;
+        System.out.println(last[0] + " " + last[1]);
+        boolean enpasswl =
+                s.r == 3 && pdr == -1 && pdc == -1 &&
+                last[0] != null && last[0].equals(s.r-2, s.c-1) && last[1].equals(s.r, s.c-1) &&
+                board[s.r][s.c-1] == State.PAWNB && white && Util.empty(board, new RC(s.r-1, s.c-1));
+        boolean enpasswr =
+                s.r == 3 && pdr == -1 && pdc == 1 &&
+                last[0] != null && last[0].equals(s.r-2, s.c+1) && last[1].equals(s.r, s.c+1) &&
+                board[s.r][s.c+1] == State.PAWNB && white && Util.empty(board, new RC(s.r-1, s.c+1));
+        boolean enpassbl =
+                s.r == 4 && pdr == 1 && pdc == -1 &&
+                last[0] != null && last[0].equals(s.r+2, s.c-1) && last[1].equals(s.r, s.c-1) &&
+                board[s.r][s.c-1] == State.PAWNW && !white && Util.empty(board, new RC(s.r+1, s.c-1));
+        boolean enpassbr =
+                s.r == 4 && pdr == 1 && pdc == 1 &&
+                last[0] != null && last[0].equals(s.r+2, s.c+1) && last[1].equals(s.r, s.c+1) &&
+                board[s.r][s.c+1] == State.PAWNW && !white && Util.empty(board, new RC(s.r+1, s.c+1));
+        return take || w1 || w2 || b1 || b2 || enpasswl || enpasswr || enpassbl || enpassbr;
     }
 
     private boolean validateKnightMove(int[][] board, RC s, RC e) {
@@ -125,7 +133,7 @@ public class Validate {
         if(prevalidate(board, s, e, state.turn)) {
             // check space validity
             if (id == State.PAWNW || id == State.PAWNB) {
-                valid = validatePawnMove(board, s, e);
+                valid = validatePawnMove(board, state.last, s, e);
             } else if (id == State.KNIGHTW || id == State.KNIGHTB) {
                 valid = validateKnightMove(board, s, e);
             } else if (id == State.BISHOPW || id == State.BISHOPB) {

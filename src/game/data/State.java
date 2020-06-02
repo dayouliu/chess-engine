@@ -25,6 +25,8 @@ public class State {
     public boolean check = false;
     public boolean mate = false;
     public boolean draw = false;
+    public RC[] last = new RC[2];
+    public int[] moved = new int[13];
 
     public int[][] board = {{10, 8, 9, 11, 12, 9, 8, 10},
                             {7, 7, 7, 7, 7, 7, 7, 7},
@@ -62,10 +64,13 @@ public class State {
     }
 
     public void move(RC s, RC e) {
-        int sid = board[s.r][s.c];
+        int id = board[s.r][s.c];
         board[s.r][s.c] = 0;
-        board[e.r][e.c] = sid;
+        board[e.r][e.c] = id;
         turn = !turn;
+        last[0] = s;
+        last[1] = e;
+        moved[id]++;
     }
 
     public void turn() {
