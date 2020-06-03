@@ -57,12 +57,15 @@ public class Board {
 		}
 	}
 
-	public void move(RC s, RC e) {
+	public void move(State state, RC s, RC e) {
 		for(Piece p : pieces) {
 			if(p.pos.equals(e)) p.remove();
 		}
 		for(Piece p : pieces) {
 			if(p.pos.equals(s)) p.pos = e;
+		}
+		for(Piece p : pieces) {
+			if(state.board[p.pos.r][p.pos.c] == 0) p.remove();
 		}
 	}
 

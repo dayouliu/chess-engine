@@ -1,8 +1,8 @@
 package game.data;
 
-import game.gen.Util;
-
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class State {
 
@@ -25,8 +25,10 @@ public class State {
     public boolean check = false;
     public boolean mate = false;
     public boolean draw = false;
-    public RC[] last = new RC[2];
-    public int[] moved = new int[13];
+
+    public List<List<RCM>> moves = new ArrayList<List<RCM>>();
+    public int[][] moved = new int[8][8];
+    public int[][] attack = new int[8][8];
 
     public int[][] board = {{10, 8, 9, 11, 12, 9, 8, 10},
                             {7, 7, 7, 7, 7, 7, 7, 7},
@@ -37,17 +39,6 @@ public class State {
                             {1, 1, 1, 1, 1, 1, 1, 1},
                             {4, 2, 3, 5, 6, 3, 2, 4}};
 
-    public State copy() {
-        State state = new State();
-        state.turn = turn;
-        state.check = turn;
-        state.mate = turn;
-        state.draw = turn;
-        state.board = new int[8][8];
-        for(int i = 0; i < 8; ++i) state.board[i] = Arrays.copyOf(board[i], 8);
-        return state;
-    }
-
     public RC find(int id) {
         for(int i = 0; i < 8; ++i) {
             for (int j = 0; j < 8; ++j) {
@@ -57,7 +48,11 @@ public class State {
         return null;
     }
 
-    public void movei(RC s, RC e) {
+    public RCM last() {
+        return moves.isEmpty() ? null : moves.get(moves.size()-1).get(0);
+    }
+
+    public void movei(RCM m) {
         int sid = board[s.r][s.c];
         board[s.r][s.c] = 0;
         board[e.r][e.c] = sid;
@@ -68,13 +63,9 @@ public class State {
         board[s.r][s.c] = 0;
         board[e.r][e.c] = id;
         turn = !turn;
-        last[0] = s;
-        last[1] = e;
-        moved[id]++;
-    }
-
-    public void turn() {
-        turn = !turn;
+        moves.add(new RCM(s, e));
+        moved[s.r][s.c] = true;
+        moved[e.r][e.c] = true;
     }
 
 }

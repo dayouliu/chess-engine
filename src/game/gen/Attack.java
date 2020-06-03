@@ -77,11 +77,12 @@ public class Attack {
         genAttack(a, b, s, 1, 1, 1);
     }
 
-    public int[][] genAttackArr(State state, boolean white) {
-        int[][] a = new int[Util.row][Util.col];
+    public void genAttackArr(State state, boolean white) {
+        int[][] a = state.attack;
         int[][] b = state.board;
         for(int i = 0; i < Util.row; ++i) {
             for(int j = 0; j < Util.col; ++j) {
+                a[i][j] = 0;
                 int id = b[i][j];
                 RC p = new RC(i, j);
                 if(id != 0 && Util.white(b, p) == white) {
@@ -101,7 +102,6 @@ public class Attack {
                 }
             }
         }
-        return a;
     }
 
 }

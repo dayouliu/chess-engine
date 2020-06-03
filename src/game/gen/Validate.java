@@ -1,14 +1,15 @@
 package game.gen;
 
 import game.data.RC;
+import game.data.RCM;
 import game.data.State;
 
 public class Validate {
 
     private Attack attack;
 
-    public Validate() {
-        attack = new Attack();
+    public Validate(Attack attack) {
+        this.attack = attack;
     }
 
     private boolean prevalidate(int[][] board, RC s, RC e, boolean turn) {
@@ -72,7 +73,31 @@ public class Validate {
         return attack[p.r][p.c] > 0;
     }
 
-    private boolean validatePawnMove(int[][] board, RC[] last, RC s, RC e) {
+    public boolean validatePawnEnpassant(int[][] board, RCM last, RC s, RC e) {
+        if(!Util.pawn(board[s.r][s.c])) return false;
+        int pdr = Util.dr(s, e);
+        int pdc = Util.dc(s, e);
+        boolean white = Util.white(board, s);
+        boolean enpasswl =
+                s.r == 3 && pdr == -1 && pdc == -1 &&
+                        last.s != null && last.s.equals(s.r-2, s.c-1) && last.e.equals(s.r, s.c-1) &&
+                        board[s.r][s.c-1] == State.PAWNB && white && Util.empty(board, new RC(s.r-1, s.c-1));
+        boolean enpasswr =
+                s.r == 3 && pdr == -1 && pdc == 1 &&
+                        last.s != null && last.s.equals(s.r-2, s.c+1) && last.e.equals(s.r, s.c+1) &&
+                        board[s.r][s.c+1] == State.PAWNB && white && Util.empty(board, new RC(s.r-1, s.c+1));
+        boolean enpassbl =
+                s.r == 4 && pdr == 1 && pdc == -1 &&
+                        last.s != null && last.s.equals(s.r+2, s.c-1) && last.e.equals(s.r, s.c-1) &&
+                        board[s.r][s.c-1] == State.PAWNW && !white && Util.empty(board, new RC(s.r+1, s.c-1));
+        boolean enpassbr =
+                s.r == 4 && pdr == 1 && pdc == 1 &&
+                        last.s != null && last.s.equals(s.r+2, s.c+1) && last.e.equals(s.r, s.c+1) &&
+                        board[s.r][s.c+1] == State.PAWNW && !white && Util.empty(board, new RC(s.r+1, s.c+1));
+        return enpasswl || enpasswr || enpassbl || enpassbr;
+    }
+
+    private boolean validatePawnMove(int[][] board, RCM last, RC s, RC e) {
         int pdr = Util.dr(s, e);
         int pdc = Util.dc(s, e);
         boolean white = Util.white(board, s);
@@ -83,24 +108,7 @@ public class Validate {
         boolean b1 = b0 && pdr == 1;
         boolean w2 = w0 && Util.empty(board, new RC(s.r-2, s.c)) && pdr == -2 && s.r == 6;
         boolean b2 = b0 && Util.empty(board, new RC(s.r+2, s.c)) && pdr == 2 && s.r == 1;
-        System.out.println(last[0] + " " + last[1]);
-        boolean enpasswl =
-                s.r == 3 && pdr == -1 && pdc == -1 &&
-                last[0] != null && last[0].equals(s.r-2, s.c-1) && last[1].equals(s.r, s.c-1) &&
-                board[s.r][s.c-1] == State.PAWNB && white && Util.empty(board, new RC(s.r-1, s.c-1));
-        boolean enpasswr =
-                s.r == 3 && pdr == -1 && pdc == 1 &&
-                last[0] != null && last[0].equals(s.r-2, s.c+1) && last[1].equals(s.r, s.c+1) &&
-                board[s.r][s.c+1] == State.PAWNB && white && Util.empty(board, new RC(s.r-1, s.c+1));
-        boolean enpassbl =
-                s.r == 4 && pdr == 1 && pdc == -1 &&
-                last[0] != null && last[0].equals(s.r+2, s.c-1) && last[1].equals(s.r, s.c-1) &&
-                board[s.r][s.c-1] == State.PAWNW && !white && Util.empty(board, new RC(s.r+1, s.c-1));
-        boolean enpassbr =
-                s.r == 4 && pdr == 1 && pdc == 1 &&
-                last[0] != null && last[0].equals(s.r+2, s.c+1) && last[1].equals(s.r, s.c+1) &&
-                board[s.r][s.c+1] == State.PAWNW && !white && Util.empty(board, new RC(s.r+1, s.c+1));
-        return take || w1 || w2 || b1 || b2 || enpasswl || enpasswr || enpassbl || enpassbr;
+        return take || w1 || w2 || b1 || b2 || validatePawnEnpassant(board, last, s, e);
     }
 
     private boolean validateKnightMove(int[][] board, RC s, RC e) {
@@ -121,47 +129,70 @@ public class Validate {
         return validateClearLine(board, s, e) || validateClearDiagonal(board, s, e);
     }
 
-    private boolean validateKingMove(int[][] board, int[][] attack, RC s, RC e) {
-        return validateMoveTake(board, s, e) && Math.abs(Util.dr(s, e)) <= 1 && Math.abs(Util.dc(s, e)) <= 1 &&
-                !validateAttacked(attack, e);
+    public boolean validateKingCastle(int[][] board, int[][] attack, int[][] moved, boolean check, RC s, RC e) {
+        boolean wcOO =
+                board[s.r][s.c] == State.KINGW && s.equals(7, 4) && e.equals(7,6) &&
+                !check && validateClear(board, s, e, 0, 1, false) &&
+                !validateAttacked(board, new RC(s.r, s.c+1)) && !validateAttacked(board, new RC(s.r, s.c+2)) &&
+                moved[7][4] == 0 && moved[7][7] == 0;
+        boolean wcOOO =
+                board[s.r][s.c] == State.KINGW && s.equals(7, 4) && e.equals(7,2) &&
+                !check && validateClear(board, s, e, 0, -1, false) &&
+                !validateAttacked(board, new RC(s.r, s.c-1)) && !validateAttacked(board, new RC(s.r, s.c-2)) &&
+                moved[7][4] == 0 && moved[7][0] == 0;
+        boolean bcOO =
+                board[s.r][s.c] == State.KINGB && s.equals(0, 4) && e.equals(0,6) &&
+                !check && validateClear(board, s, e, 0, 1, false) &&
+                !validateAttacked(board, new RC(s.r, s.c+1)) && !validateAttacked(board, new RC(s.r, s.c+2)) &&
+                moved[0][4] == 0 && moved[0][7] == 0;
+        boolean bcOOO =
+                board[s.r][s.c] == State.KINGB && s.equals(0, 4) && e.equals(0,2) &&
+                !check && validateClear(board, s, e, 0, -1, false) &&
+                !validateAttacked(board, new RC(s.r, s.c-1)) && !validateAttacked(board, new RC(s.r, s.c-2)) &&
+                moved[0][4] == 0 && moved[0][0] == 0;
+        return wcOO || wcOOO || bcOO || bcOOO;
+    }
+
+    private boolean validateKingMove(int[][] board, int[][] attack, int[][] moved, boolean check, RC s, RC e) {
+        boolean knc = validateMoveTake(board, s, e) && !validateAttacked(attack, e) &&
+                Math.abs(Util.dr(s, e)) <= 1 && Math.abs(Util.dc(s, e)) <= 1;
+        boolean kc = validateKingCastle(board, attack, moved, check, s, e);
+        return knc || kc;
     }
 
     public boolean validateMove(State state, RC s, RC e) {
-        int[][] board = state.board;
+        int[][] b = state.board;
+        int[][] a = state.attack;
         int id = state.board[s.r][s.c];
         boolean valid = false;
-        if(prevalidate(board, s, e, state.turn)) {
+        if(prevalidate(b, s, e, state.turn)) {
             // check space validity
             if (id == State.PAWNW || id == State.PAWNB) {
-                valid = validatePawnMove(board, state.last, s, e);
+                valid = validatePawnMove(b, state.last(), s, e);
             } else if (id == State.KNIGHTW || id == State.KNIGHTB) {
-                valid = validateKnightMove(board, s, e);
+                valid = validateKnightMove(b, s, e);
             } else if (id == State.BISHOPW || id == State.BISHOPB) {
-                valid = validateBishopMove(board, s, e);
+                valid = validateBishopMove(b, s, e);
             } else if (id == State.ROOKW || id == State.ROOKB) {
-                valid = validateRookMove(board, s, e);
+                valid = validateRookMove(b, s, e);
             } else if (id == State.QUEENW || id == State.QUEENB) {
-                valid = validateQueenMove(board, s, e);
+                valid = validateQueenMove(b, s, e);
             } else if (id == State.KINGW || id == State.KINGB) {
-                int[][] a = attack.genAttackArr(state, !state.turn);
-                valid = validateKingMove(board, a, s, e);
+                valid = validateKingMove(b, a, state.moved, state.check, s, e);
             }
+
             System.out.println("move valid: " + valid);
             // check pin validity
             if(valid) {
-                State next = state.copy();
                 next.movei(s, e);
-                int[][] a = attack.genAttackArr(next, !state.turn);
+                attack.genAttackArr(state, state.turn);
                 int kid = state.turn ? State.KINGW : State.KINGB;
                 RC king = state.find(kid);
                 if(a[king.r][king.c] > 0) valid = false;
             }
             System.out.println("pin valid: " + valid);
         }
-        System.out.println("attack arr: ");
-        Util.print(attack.genAttackArr(state, !state.turn));
         System.out.println("valid: " + valid);
-        System.out.println();
         return valid;
     }
 

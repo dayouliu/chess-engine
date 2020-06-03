@@ -1,6 +1,7 @@
 package game.gen;
 
 import game.data.RC;
+import game.data.State;
 
 public class Util {
 
@@ -51,6 +52,10 @@ public class Util {
             }
             System.out.println();
         }
+    }
+
+    public static boolean pawn(int id) {
+        return id == State.PAWNW || id == State.PAWNB;
     }
 
 }

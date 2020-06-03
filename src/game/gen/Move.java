@@ -5,88 +5,39 @@ import game.data.State;
 
 public class Move {
 
+    private Validate validate;
+    private Attack attack;
+
+    public Move(Attack attack, Validate validate) {
+        this.validate = validate;
+        this.attack = attack;
+    }
+
     public void move(State state, RC s, RC e) {
+        int dr = Util.dr(s, e);
+        int dc = Util.dc(s, e);
+
+        // en passant
+        if(validate.validatePawnEnpassant(state.board, state.last(), s, e)) {
+            state.board[e.r-dr][e.c] = 0;
+        }
+
+        // castle
+        if(validate.validateKingCastle(state.board, state.attack, state.moved, state.check, s, e)) {
+            state.board[e.r-dr][e.c] = 0;
+        }
+
+        // move
         state.move(s, e);
+
+        // check
+        attack.genAttackArr(state, state.turn);
+        int kid = state.turn ? State.KINGW : State.KINGB;
+        RC k = state.find(kid);
+        if(state.attack[k.r][k.c] > 0) state.check = true; else state.check = false;
+        System.out.println("check: " + state.check);
+
+        System.out.println();
     }
-
-    /*
-    // Take moves
-
-    private void take(RC e) {
-        if(getPiece(e) != null) {
-            app.getBoard().getPosition().remove(getPiece(e));
-        }
-    }
-
-    public void move(RC s, RC e) {
-
-        Piece[][] checkPieces = new Piece[irow+1][icol+1];
-        RC[][] checkAttack = new RC[irow+1][icol+1];
-        if(validMove(piece, e)) {
-            RC s = piece.getPos();
-            // Take
-            take(e);
-            // Move
-            checkPieces[s.r][s.c] = null;
-            checkPieces[e.r][e.c] = piece;
-            piece.setRC(e);
-            // Promote
-            promote(e);
-            // Attack
-            attack();
-            // Check and mate
-            check();
-            mate();
-            // Next turn
-            app.getBoard().getPosition().turn();
-        }
-
-    }
-
-    // Promotion Moves
-
-    private void promote(RC e) {
-        Piece piece = getPiece(e);
-        boolean first = piece.isFirst();
-        boolean canPromote = piece.getId() == Piece.PAWN &&
-                ((first && e.r == 0) || (!first && e.r == irow));
-        if(canPromote) {
-            app.getBoard().getPosition().remove(piece);
-            app.getBoard().add(new Queen(app, first, e.r, e.c));
-        }
-    }
-
-
-
-    // Checking and mating moves
-
-    private void check() {
-        boolean turn = app.getBoard().getPosition().getTurn();
-        Piece king = turn ? app.getBoard().getPosition().getKingB() :
-                app.getBoard().getPosition().getKingW();
-        app.getBoard().getPosition().setCheckFlag(isAttacked(king.getPos(), turn));
-    }
-
-    private int[] alldirR = {-1, -1, -1, 0, 0, 1, 1, 1};
-    private int[] alldirC = {-1, 0, 1, -1, 1, -1, 0, 1};
-
-    private void mate() {
-        if(app.getBoard().getPosition().isCheckFlag()) {
-            boolean turn = app.getBoard().getPosition().getTurn();
-            Piece king = turn ? app.getBoard().getPosition().getKingB() :
-                    app.getBoard().getPosition().getKingW();
-            RC s = king.getPos();
-            for (int i = 0; i < 8; i++) {
-                RC e = new RC(s.r + alldirR[i], s.c + alldirC[i]);
-                if (inBounds(e)) {
-                    if(!isAttacked(e, turn)) {
-                        return;
-                    }
-                }
-            }
-            app.getBoard().getPosition().setMateFlag(true);
-        }
-    }
-
-    */
+    
 }

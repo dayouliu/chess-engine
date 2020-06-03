@@ -2,6 +2,7 @@ package main;
 
 import game.data.RC;
 import game.data.State;
+import game.gen.Attack;
 import game.gen.Move;
 import game.gen.Validate;
 import gui.Assets;
@@ -15,6 +16,7 @@ public class Chess extends Application {
     protected Test test;
 
     protected State state;
+    protected Attack attack;
     protected Validate validate;
     protected Move move;
 
@@ -23,8 +25,9 @@ public class Chess extends Application {
 
     public Chess() {
         state = new State();
-        validate = new Validate();
-        move = new Move();
+        attack = new Attack();
+        validate = new Validate(attack);
+        move = new Move(attack, validate);
     }
 
     protected void init() {
@@ -38,7 +41,7 @@ public class Chess extends Application {
     public void move(RC s, RC e) {
         if(validate.validateMove(state, s, e)) {
             move.move(state, s, e);
-            board.move(s, e);
+            board.move(state, s, e);
         }
     }
 
