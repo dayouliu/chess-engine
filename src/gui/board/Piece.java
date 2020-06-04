@@ -2,7 +2,7 @@ package gui.board;
 
 import game.data.RC;
 import gui.Assets;
-import main.Chess;
+import main.Application;
 import game.gen.Validate;
 
 import java.awt.*;
@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 
 public class Piece {
 
-    protected Chess app;
+    protected Application app;
     protected Validate move;
     protected int id;
     protected RC pos;
@@ -19,26 +19,26 @@ public class Piece {
     protected Rectangle bounds = new Rectangle();
     protected boolean pieceSelected = false;
 
-    public Piece(Chess app, int id, int r, int c) {
+    public Piece(Application app, int id, int r, int c) {
         this.app = app;
         this.id = id;
         this.pos = new RC(r,  c);
     }
 
     public void update() {
-        double len = app.getBoard().getLen();
-        double pieceLen = len * app.getBoard().getPieceLen();
+        double len = app.getChess().getBoard().getLen();
+        double pieceLen = len * app.getChess().getBoard().getPieceLen();
         int dmx = app.getMouse().dmx;
         int dmy = app.getMouse().dmy;
 
         if(pieceSelected && !app.getMouse().left()) {
             pieceSelected = false;
-            app.getBoard().setSelected(null);
-            Point tlc = app.getBoard().getTLC();
+            app.getChess().getBoard().setSelected(null);
+            Point tlc = app.getChess().getBoard().getTLC();
             int nr = (int)((dmy - tlc.y) / len);
             int nc = (int)((dmx - tlc.x) / len);
             RC e = new RC(nr, nc);
-            app.move(pos, e);
+            app.getChess().move(pos, e);
         }
 
         if(pieceSelected) {
@@ -47,16 +47,16 @@ public class Piece {
             bounds.width = (int)pieceLen;
             bounds.height = (int)pieceLen;
         } else {
-            Point tlc = app.getBoard().getTLC();
+            Point tlc = app.getChess().getBoard().getTLC();
             double pieceOffset = (len - pieceLen) / 2;
             bounds.x = (int)(tlc.x + pos.c * len + pieceOffset);
             bounds.y = (int)(tlc.y + pos.r * len + pieceOffset);
             bounds.width = (int)pieceLen;
             bounds.height = (int)pieceLen;
-            pieceSelected = !app.getBoard().isSelected() &&
+            pieceSelected = !app.getChess().getBoard().isSelected() &&
                     app.getMouse().left() && bounds.contains(dmx, dmy);
             if (pieceSelected) {
-                app.getBoard().setSelected(this);
+                app.getChess().getBoard().setSelected(this);
             }
         }
     }

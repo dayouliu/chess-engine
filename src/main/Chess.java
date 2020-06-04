@@ -5,6 +5,7 @@ import game.data.RCM;
 import game.data.State;
 import game.gen.Attack;
 import game.gen.Move;
+import game.gen.Util;
 import game.gen.Validate;
 import gui.Assets;
 import gui.board.Board;
@@ -13,52 +14,55 @@ import tests.Test;
 import java.awt.*;
 import java.util.List;
 
-public class Chess extends Application {
+public class Chess {
 
-    protected Test test;
+    public Application app;
 
-    protected State state;
-    protected Attack attack;
-    protected Validate validate;
-    protected Move move;
+    public State state;
+    public Attack attack;
+    public Validate validate;
+    public Move move;
 
-    protected Board board;
-    protected Assets assets;
+    public Board board;
+    public Assets assets;
 
-    public Chess() {
+    public Chess(Application app) {
+        this.app = app;
         state = new State();
         attack = new Attack();
         move = new Move(attack);
         validate = new Validate(move);
     }
 
-    protected void init() {
-        super.init();
+    public void init() {
         assets = new Assets();
-        board = new Board(this);
+        board = new Board(app);
         board.init(state);
-        super.initrz();
     }
 
     public void move(RC s, RC e) {
         List<RCM> m = validate.validateMove(state, s, e);
         if(!m.isEmpty()) {
-            move.move(state, m, !state.turn);
+            move.move(state, m);
             board.move(state, s, e);
         }
+        Util.print(state.board);
         System.out.println();
     }
 
-    protected void update() {
+    public void unmove() {
+        move.unmove(state, !state.turn);
+    }
+
+    public void update() {
         board.update();
     }
 
-    protected void render(Graphics g) {
-        super.render(g);
+    public void render(Graphics g) {
         board.render(g);
     }
 
-    protected void resize() {
+    public void resize() {
         board.resize();
     }
 
@@ -76,10 +80,6 @@ public class Chess extends Application {
 
     public void setState(State state) {
         this.state = state;
-    }
-
-    public static void main(String[] args) {
-        new Chess().start();
     }
 
 }

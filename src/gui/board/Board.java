@@ -2,7 +2,7 @@ package gui.board;
 
 import game.data.RC;
 import game.data.State;
-import main.Chess;
+import main.Application;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Board {
 	
-	private Chess app;
+	private Application app;
 	private int row = 8, col = 8;
 	private double scale = 1.0;
 	private double len = 50;
@@ -22,7 +22,7 @@ public class Board {
 	private List<Piece> piecesa = new ArrayList<Piece>();
 	private Piece selected;
 
-	public Board(Chess app) {
+	public Board(Application app) {
 		this.app = app;
 		board = new Square[row][col];
 		for(int i = 0; i < row; i++) {
@@ -58,14 +58,17 @@ public class Board {
 	}
 
 	public void move(State state, RC s, RC e) {
-		for(Piece p : pieces) {
-			if(p.pos.equals(e)) p.remove();
-		}
-		for(Piece p : pieces) {
-			if(p.pos.equals(s)) p.pos = e;
-		}
-		for(Piece p : pieces) {
-			if(state.board[p.pos.r][p.pos.c] == 0) p.remove();
+		for(int i = 0; i < 8; ++i) {
+			for(int j = 0; j < 8; ++j) {
+				int id = state.board[i][j];
+				RC pos = new RC(i, j);
+				boolean found = false;
+				for(Piece p : pieces) {
+					if(p.pos.equals(pos) && p.id == id) found = true;
+					if(p.pos.equals(pos) && p.id != id) p.remove();
+				}
+				if(id != 0 && !found) piecesa.add(new Piece(app, id, i, j));
+			}
 		}
 	}
 
@@ -82,7 +85,9 @@ public class Board {
 		}
 		piecesa.clear();
 		pieces = piecesu;
-		for(Piece p : pieces) p.update();
+		for(Piece piece : pieces) {
+			piece.update();
+		}
 	}
 
 	public void render(Graphics g) {

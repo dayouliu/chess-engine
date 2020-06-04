@@ -1,9 +1,12 @@
 package gui.io;
 
+import main.Application;
+import main.Chess;
+
 import java.awt.event.*;
 
 public class Mouse implements MouseListener, MouseMotionListener, MouseWheelListener{
-	
+
 	private boolean left, right;
 	public int mx, my, dmx, dmy, wheel;
 
@@ -44,7 +47,11 @@ public class Mouse implements MouseListener, MouseMotionListener, MouseWheelList
 	public void wheelReset() {wheel = 0;}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {
+		if(e.getButton() == e.BUTTON3) {
+			System.out.println("!!!");
+		}
+	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {

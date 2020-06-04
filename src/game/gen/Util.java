@@ -43,7 +43,7 @@ public class Util {
     }
 
     public static boolean empty(int[][] board, RC e) {
-        return board[e.r][e.c] == 0;
+        return bound(e) && board[e.r][e.c] == 0;
     }
 
     public static RCM move(int[][] board, RC s, RC e) {

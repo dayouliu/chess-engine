@@ -4,6 +4,7 @@ import game.data.RC;
 import game.data.RCM;
 import game.data.State;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Move {
@@ -20,9 +21,13 @@ public class Move {
         state.check = state.attack[k.r][k.c] > 0;
     }
 
+    public void mate(State state) {
+
+    }
+
     public void move(State state, List<RCM> move, boolean turn) {
         // turn
-        state.turn = turn;
+        if(turn) state.turn = !state.turn;
 
         // move
         for(RCM m : move) {
@@ -31,7 +36,7 @@ public class Move {
         }
 
         // add to move history
-        state.moves.add(move);
+        state.moves.add(new ArrayList<RCM>(move));
 
         // moved
         for(RCM m : move) {
@@ -43,18 +48,23 @@ public class Move {
         check(state);
     }
 
+    public void move(State state, List<RCM> move) {
+        move(state, move, true);
+    }
+
     public void unmove(State state, boolean turn) {
         // unturn
-        state.turn = turn;
+        if(turn) state.turn = !state.turn;
 
         // unmove
         List<RCM> move = state.moves.get(state.moves.size()-1);
-        for(RCM m : move) {
+        for(int i = move.size()-1; i >= 0; --i) {
+            RCM m = move.get(i);
             state.board[m.s.r][m.s.c] = m.a;
             state.board[m.e.r][m.e.c] = m.b;
         }
 
-        // add to move history
+        // remove from move history
         state.moves.remove(state.moves.size()-1);
 
         // unmoved
@@ -65,6 +75,10 @@ public class Move {
 
         // check
         check(state);
+    }
+
+    public void unmove(State state) {
+        unmove(state, true);
     }
 
 }

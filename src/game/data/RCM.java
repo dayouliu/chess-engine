@@ -14,4 +14,13 @@ public class RCM {
         this.b = b;
     }
 
+    @Override
+    public String toString() {
+        return "RCM{" +
+                "s=" + s +
+                ", e=" + e +
+                ", a=" + a +
+                ", b=" + b +
+                '}';
+    }
 }

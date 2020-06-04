@@ -83,6 +83,10 @@ public class Attack {
         for(int i = 0; i < Util.row; ++i) {
             for(int j = 0; j < Util.col; ++j) {
                 a[i][j] = 0;
+            }
+        }
+        for(int i = 0; i < Util.row; ++i) {
+            for(int j = 0; j < Util.col; ++j) {
                 int id = b[i][j];
                 RC p = new RC(i, j);
                 if(id != 0 && Util.white(b, p) == !state.turn) {

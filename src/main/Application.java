@@ -1,6 +1,5 @@
 package main;
 
-import gui.Assets;
 import gui.board.Board;
 import gui.io.Keys;
 import gui.io.Mouse;
@@ -25,14 +24,16 @@ public class Application {
 	protected Keys keys;
 	protected Mouse mouse;
 
+	protected Chess chess;
+
 	protected void start() {
 		running = true;
 		run();
 	}
 	
 	protected void init() {
-		// Frame creation
-		frame = new JFrame("DY Chess Engine");
+		// frame creation
+		frame = new JFrame("Chess Engine");
 		frame.setSize(initWidth, initHeight);
 		frame.setMinimumSize(new Dimension(initWidth, initHeight));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,7 +41,7 @@ public class Application {
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 
-		// Canvas creation
+		// canvas creation
 		canvas = new Canvas();
 		canvas.setPreferredSize(new Dimension(initWidth, initHeight));
 		canvas.setMinimumSize(new Dimension(initWidth, initHeight));
@@ -48,7 +49,7 @@ public class Application {
 		frame.add(canvas);
 		frame.pack();
 
-		// Input creation
+		// input creation
 		keys = new Keys();
 		mouse = new Mouse();
 		frame.addMouseListener(mouse);
@@ -59,18 +60,21 @@ public class Application {
 		canvas.addMouseWheelListener(mouse);
 		frame.addKeyListener(keys);
 
-		// BS creation
+		// buffer creation
 		canvas.createBufferStrategy(3);
-	}
 
-	protected void resize() {}
+		chess = new Chess(this);
+		chess.init();
 
-	protected void initrz() {
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent componentEvent) {
 				resize();
 			}
 		});
+	}
+
+	protected void resize() {
+		chess.resize();
 	}
 
 	protected long previous = System.nanoTime();
@@ -109,10 +113,13 @@ public class Application {
 		stop();
 	}
 
-	protected void update() {}
+	protected void update() {
+		chess.update();
+	}
 
 	protected void render(Graphics g) {
 		g.drawString(Double.toString(fps),20, 20);
+		chess.render(g);
 	}
 	
 	protected void render() {
@@ -152,6 +159,14 @@ public class Application {
 
 	public Mouse getMouse() {
 		return mouse;
+	}
+
+	public Chess getChess() {
+		return chess;
+	}
+
+	public static void main(String[] args) {
+		new Application().start();
 	}
 
 }

@@ -1,16 +1,16 @@
 package gui.board;
 
-import main.Chess;
+import main.Application;
 
 import java.awt.*;
 
 public class Square {
 
-    private Chess app;
+    private Application app;
     private int r, c;
     private Color color;
 
-    public Square(Chess app, int r, int c) {
+    public Square(Application app, int r, int c) {
         this.app = app;
         this.r = r;
         this.c = c;
@@ -23,8 +23,8 @@ public class Square {
     }
 
     public void render(Graphics g) {
-        double len = app.getBoard().getLen();
-        Point tlc = app.getBoard().getTLC();
+        double len = app.getChess().getBoard().getLen();
+        Point tlc = app.getChess().getBoard().getTLC();
         int x = (int)(tlc.x + c * len);
         int y = (int)(tlc.y + r * len);
         g.setColor(color);
