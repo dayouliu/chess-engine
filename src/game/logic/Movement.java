@@ -15,16 +15,7 @@ public class Movement {
         this.attack = attack;
     }
 
-    public void check(State state) {
-        attack.genAttackArr(state);
-        RC k = state.find(state.turn ? State.KINGW : State.KINGB);
-        state.check = state.attack[k.r][k.c] > 0;
-    }
-
-    public void move(State state, List<RCM> move, boolean turn) {
-        // turn
-        if(turn) state.turn = !state.turn;
-
+    public void move(State state, List<RCM> move) {
         // move
         for(RCM m : move) {
             state.board[m.s.r][m.s.c] = 0;
@@ -40,18 +31,10 @@ public class Movement {
             ++state.moved[m.e.r][m.e.c];
         }
 
-        // check
-        check(state);
+        attack.genAttackArr(state);
     }
 
-    public void move(State state, List<RCM> move) {
-        move(state, move, true);
-    }
-
-    public void unmove(State state, boolean turn) {
-        // unturn
-        if(turn) state.turn = !state.turn;
-
+    public void unmove(State state) {
         // unmove
         List<RCM> move = state.moves.get(state.moves.size()-1);
         for(int i = move.size()-1; i >= 0; --i) {
@@ -69,12 +52,7 @@ public class Movement {
             --state.moved[m.e.r][m.e.c];
         }
 
-        // check
-        check(state);
-    }
-
-    public void unmove(State state) {
-        unmove(state, true);
+        attack.genAttackArr(state);
     }
 
 }

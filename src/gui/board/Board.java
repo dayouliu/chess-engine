@@ -2,6 +2,7 @@ package gui.board;
 
 import game.data.RC;
 import game.data.State;
+import game.logic.Util;
 import main.Application;
 
 import java.awt.*;
@@ -33,9 +34,9 @@ public class Board {
 	}
 
 	public void resize() {
-		len = (int)(Math.min(app.getCanvasWidth(), app.getCanvasHeight()) / Math.max(row, col) * 0.6);
+		len = (int)(Math.min(app.getCanvasWidth(), app.getCanvasHeight()) / Math.max(row, col) * 0.8);
 		int centerX = app.getCanvasWidth() / 2;
-		int centerY = (int)(app.getCanvasHeight() * 0.45);
+		int centerY = (int)(app.getCanvasHeight() * 0.48);
 		tlc.x = (int) (centerX - (col / 2) * len);
 		tlc.y = (int) (centerY - (row / 2) * len);
 	}

@@ -20,11 +20,10 @@ public class Chess {
     public Movement movement;
     public Validate validate;
     public Gen gen;
+    public Flag flag;
 
     public Board board;
     public Assets assets;
-
-    private List<List<RCM>> moves;
 
     public Chess(Application app) {
         this.app = app;
@@ -33,28 +32,38 @@ public class Chess {
         movement = new Movement(attack);
         validate = new Validate(movement);
         gen = new Gen(validate);
-        moves = gen.genMoves(state);
+        flag = new Flag(gen);
     }
 
     public void init() {
         assets = new Assets();
         board = new Board(app);
         board.init(state);
+        state.next = gen.genMoves(state, state.turn);
     }
 
     public void move(RC s, RC e) {
         List<RCM> m = validate.validateMove(state, s, e);
         if(!m.isEmpty()) {
             movement.move(state, m);
+            flag.flag(state);
             board.move(state, s, e);
         }
-        moves = gen.genMoves(state);
+        /*
+        Util.print(state.attack[0]);
+    `   System.out.println();
+        Util.print(state.attack[1]);
+        System.out.println();`
+         */
         Util.print(state.board);
+        System.out.println("valid: " + !m.isEmpty());
+        System.out.println("check: " + state.check);
+        System.out.println("mate: " + state.mate);
         System.out.println();
     }
 
     public void unmove() {
-        movement.unmove(state, !state.turn);
+        movement.unmove(state);
     }
 
     public void update() {
@@ -63,7 +72,7 @@ public class Chess {
 
     public void render(Graphics g) {
         board.render(g);
-        for(List<RCM> move : moves) {
+        for(List<RCM> move : state.next) {
             RCM m = move.get(0);
             double len = app.getChess().getBoard().getLen();
             Point tlc = app.getChess().getBoard().getTLC();

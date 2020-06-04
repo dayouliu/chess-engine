@@ -94,13 +94,13 @@ public class Gen {
         genMove(a, b, s, 0, -2, 1);
     }
 
-    public List<List<RCM>> genMoves(State state) {
+    public List<List<RCM>> genMoves(State state, boolean turn) {
         List<List<RCM>> moves = new ArrayList<List<RCM>>();
         for(int i = 0; i < Util.row; ++i) {
             for(int j = 0; j < Util.col; ++j) {
                 int id = state.board[i][j];
                 RC p = new RC(i, j);
-                if(id != 0 && Util.white(state.board, p) == state.turn) {
+                if(id != 0 && Util.white(state.board, p) == turn) {
                     if (id == State.PAWNW || id == State.PAWNB) {
                         genPawnMoves(moves, state, p);
                     } else if (id == State.KNIGHTW || id == State.KNIGHTB) {

@@ -1,5 +1,7 @@
 package game.data;
 
+import game.logic.Util;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,18 +28,30 @@ public class State {
     public boolean mate = false;
     public boolean draw = false;
 
-    public List<List<RCM>> moves = new ArrayList<List<RCM>>();
     public int[][] moved = new int[8][8];
-    public int[][] attack = new int[8][8];
+    public int[][][] attack = new int[2][8][8];
+    public List<List<RCM>> moves = new ArrayList<List<RCM>>();
+    public List<List<RCM>> next;
+
+    /*
+    public int[][] board = {{10, 0, 0, 0, 0, 10, 12, 0},
+                            {0, 7, 7, 0, 0, 7, 7, 7},
+                            {0, 0, 8, 7, 11, 0, 0, 0},
+                            {7, 0, 9, 0, 0, 0, 0, 0},
+                            {1, 0, 1, 5, 1, 0, 0, 0},
+                            {0, 0, 7, 0, 0, 0, 1, 0},
+                            {0, 1, 0, 0, 0, 0, 3, 0},
+                            {4, 0, 3, 0, 0, 4, 6, 0}};
+    */
 
     public int[][] board = {{10, 8, 9, 11, 12, 9, 8, 10},
-                            {7, 7, 7, 7, 7, 7, 7, 7},
-                            {0, 0, 0, 0, 0, 0, 0, 0},
-                            {0, 0, 0, 0, 0, 0, 0, 0},
-                            {0, 0, 0, 0, 0, 0, 0, 0},
-                            {0, 0, 0, 0, 0, 0, 0, 0},
-                            {1, 1, 1, 1, 1, 1, 1, 1},
-                            {4, 2, 3, 5, 6, 3, 2, 4}};
+            {7, 7, 7, 7, 7, 7, 7, 7},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 1, 1, 1, 1, 1, 1, 1},
+            {4, 2, 3, 5, 6, 3, 2, 4}};
 
     public RC find(int id) {
         for(int i = 0; i < 8; ++i) {

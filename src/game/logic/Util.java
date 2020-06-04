@@ -50,6 +50,19 @@ public class Util {
         return new RCM(s, e, board[s.r][s.c], board[e.r][e.c]);
     }
 
+    public static int[] pieces(int[][] board) {
+        int[] p = new int[13];
+        for(int i = 0; i < board.length; ++i) {
+            for(int j = 0; j < board[i].length; ++j) {
+                if(board[i][j] != 0) {
+                    ++p[0];
+                    ++p[board[i][j]];
+                }
+            }
+        }
+        return p;
+    }
+
     public static void print(int[][] arr) {
         for(int i = 0; i < arr.length; ++i) {
             for(int j = 0; j < arr[i].length; ++j) {
