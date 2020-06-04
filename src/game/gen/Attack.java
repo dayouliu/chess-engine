@@ -77,7 +77,7 @@ public class Attack {
         genAttack(a, b, s, 1, 1, 1);
     }
 
-    public void genAttackArr(State state, boolean white) {
+    public void genAttackArr(State state) {
         int[][] a = state.attack;
         int[][] b = state.board;
         for(int i = 0; i < Util.row; ++i) {
@@ -85,7 +85,7 @@ public class Attack {
                 a[i][j] = 0;
                 int id = b[i][j];
                 RC p = new RC(i, j);
-                if(id != 0 && Util.white(b, p) == white) {
+                if(id != 0 && Util.white(b, p) == !state.turn) {
                     if (id == State.PAWNW || id == State.PAWNB) {
                         genAttackPawn(a, b, p);
                     } else if (id == State.KNIGHTW || id == State.KNIGHTB) {

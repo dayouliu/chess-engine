@@ -52,20 +52,4 @@ public class State {
         return moves.isEmpty() ? null : moves.get(moves.size()-1).get(0);
     }
 
-    public void movei(RCM m) {
-        int sid = board[s.r][s.c];
-        board[s.r][s.c] = 0;
-        board[e.r][e.c] = sid;
-    }
-
-    public void move(RC s, RC e) {
-        int id = board[s.r][s.c];
-        board[s.r][s.c] = 0;
-        board[e.r][e.c] = id;
-        turn = !turn;
-        moves.add(new RCM(s, e));
-        moved[s.r][s.c] = true;
-        moved[e.r][e.c] = true;
-    }
-
 }

@@ -1,6 +1,7 @@
 package game.gen;
 
 import game.data.RC;
+import game.data.RCM;
 import game.data.State;
 
 public class Util {
@@ -43,6 +44,10 @@ public class Util {
 
     public static boolean empty(int[][] board, RC e) {
         return board[e.r][e.c] == 0;
+    }
+
+    public static RCM move(int[][] board, RC s, RC e) {
+        return new RCM(s, e, board[s.r][s.c], board[e.r][e.c]);
     }
 
     public static void print(int[][] arr) {

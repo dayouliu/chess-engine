@@ -4,12 +4,15 @@ import game.data.RC;
 import game.data.RCM;
 import game.data.State;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Validate {
 
-    private Attack attack;
+    private Move movement;
 
-    public Validate(Attack attack) {
-        this.attack = attack;
+    public Validate(Move move) {
+        this.movement = move;
     }
 
     private boolean prevalidate(int[][] board, RC s, RC e, boolean turn) {
@@ -97,7 +100,7 @@ public class Validate {
         return enpasswl || enpasswr || enpassbl || enpassbr;
     }
 
-    private boolean validatePawnMove(int[][] board, RCM last, RC s, RC e) {
+    private List<RCM> validatePawnMove(int[][] board, RCM last, RC s, RC e) {
         int pdr = Util.dr(s, e);
         int pdc = Util.dc(s, e);
         boolean white = Util.white(board, s);
@@ -108,25 +111,51 @@ public class Validate {
         boolean b1 = b0 && pdr == 1;
         boolean w2 = w0 && Util.empty(board, new RC(s.r-2, s.c)) && pdr == -2 && s.r == 6;
         boolean b2 = b0 && Util.empty(board, new RC(s.r+2, s.c)) && pdr == 2 && s.r == 1;
-        return take || w1 || w2 || b1 || b2 || validatePawnEnpassant(board, last, s, e);
+        boolean enpass = validatePawnEnpassant(board, last, s, e);
+
+        List<RCM> move = new ArrayList<RCM>();
+        if(take || w1 || w2 || b1 || b2) {
+            move.add(Util.move(board, s, e));
+        } else if(enpass) {
+            move.add(Util.move(board, s, e));
+            RC other = new RC(e.r-pdr, e.c);
+            move.add(new RCM(other, other, State.EMPTY, board[e.r-pdr][e.c]));
+        }
+        return move;
     }
 
-    private boolean validateKnightMove(int[][] board, RC s, RC e) {
+    private List<RCM> validateKnightMove(int[][] board, RC s, RC e) {
         int kdr = Math.abs(Util.dr(s, e));
         int kdc = Math.abs(Util.dc(s, e));
-        return validateMoveTake(board, s, e) && ((kdr == 1 && kdc == 2) || (kdr == 2 && kdc == 1));
+        List<RCM> move = new ArrayList<RCM>();
+        if(validateMoveTake(board, s, e) && ((kdr == 1 && kdc == 2) || (kdr == 2 && kdc == 1))) {
+            move.add(Util.move(board, s, e));
+        }
+        return move;
     }
 
-    private boolean validateRookMove(int[][] board, RC s, RC e) {
-        return validateClearLine(board, s, e);
+    private List<RCM> validateRookMove(int[][] board, RC s, RC e) {
+        List<RCM> move = new ArrayList<RCM>();
+        if(validateClearLine(board, s, e)) {
+            move.add(Util.move(board, s, e));
+        }
+        return move;
     }
 
-    private boolean validateBishopMove(int[][] board, RC s, RC e) {
-        return validateClearDiagonal(board, s, e);
+    private List<RCM> validateBishopMove(int[][] board, RC s, RC e) {
+        List<RCM> move = new ArrayList<RCM>();
+        if(validateClearDiagonal(board, s, e)) {
+            move.add(Util.move(board, s, e));
+        }
+        return move;
     }
 
-    private boolean validateQueenMove(int[][] board, RC s, RC e) {
-        return validateClearLine(board, s, e) || validateClearDiagonal(board, s, e);
+    private List<RCM> validateQueenMove(int[][] board, RC s, RC e) {
+        List<RCM> move = new ArrayList<RCM>();
+        if(validateClearLine(board, s, e) || validateClearDiagonal(board, s, e)) {
+            move.add(Util.move(board, s, e));
+        }
+        return move;
     }
 
     public boolean validateKingCastle(int[][] board, int[][] attack, int[][] moved, boolean check, RC s, RC e) {
@@ -153,47 +182,51 @@ public class Validate {
         return wcOO || wcOOO || bcOO || bcOOO;
     }
 
-    private boolean validateKingMove(int[][] board, int[][] attack, int[][] moved, boolean check, RC s, RC e) {
+    private List<RCM> validateKingMove(int[][] board, int[][] attack, int[][] moved, boolean check, RC s, RC e) {
+        List<RCM> move = new ArrayList<RCM>();
         boolean knc = validateMoveTake(board, s, e) && !validateAttacked(attack, e) &&
                 Math.abs(Util.dr(s, e)) <= 1 && Math.abs(Util.dc(s, e)) <= 1;
         boolean kc = validateKingCastle(board, attack, moved, check, s, e);
-        return knc || kc;
+        if(knc || kc) {
+            move.add(Util.move(board, s, e));
+        }
+        return move;
     }
 
-    public boolean validateMove(State state, RC s, RC e) {
+    public List<RCM> validateMove(State state, RC s, RC e) {
         int[][] b = state.board;
         int[][] a = state.attack;
         int id = state.board[s.r][s.c];
-        boolean valid = false;
+        List<RCM> move = new ArrayList<RCM>();
         if(prevalidate(b, s, e, state.turn)) {
             // check space validity
             if (id == State.PAWNW || id == State.PAWNB) {
-                valid = validatePawnMove(b, state.last(), s, e);
+                move = validatePawnMove(b, state.last(), s, e);
             } else if (id == State.KNIGHTW || id == State.KNIGHTB) {
-                valid = validateKnightMove(b, s, e);
+                move = validateKnightMove(b, s, e);
             } else if (id == State.BISHOPW || id == State.BISHOPB) {
-                valid = validateBishopMove(b, s, e);
+                move = validateBishopMove(b, s, e);
             } else if (id == State.ROOKW || id == State.ROOKB) {
-                valid = validateRookMove(b, s, e);
+                move = validateRookMove(b, s, e);
             } else if (id == State.QUEENW || id == State.QUEENB) {
-                valid = validateQueenMove(b, s, e);
+                move = validateQueenMove(b, s, e);
             } else if (id == State.KINGW || id == State.KINGB) {
-                valid = validateKingMove(b, a, state.moved, state.check, s, e);
+                move = validateKingMove(b, a, state.moved, state.check, s, e);
             }
 
-            System.out.println("move valid: " + valid);
+            System.out.println("move valid: " + !move.isEmpty());
             // check pin validity
-            if(valid) {
-                next.movei(s, e);
-                attack.genAttackArr(state, state.turn);
-                int kid = state.turn ? State.KINGW : State.KINGB;
-                RC king = state.find(kid);
-                if(a[king.r][king.c] > 0) valid = false;
+            if(!move.isEmpty()) {
+                movement.move(state, move, state.turn);
+                RC king = state.find(state.turn ? State.KINGW : State.KINGB);
+                if(a[king.r][king.c] > 0)
+                    move.clear();
+                movement.unmove(state, state.turn);
             }
-            System.out.println("pin valid: " + valid);
+            System.out.println("pin valid: " + !move.isEmpty());
         }
-        System.out.println("valid: " + valid);
-        return valid;
+
+        return move;
     }
 
 }

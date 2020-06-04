@@ -1,6 +1,7 @@
 package main;
 
 import game.data.RC;
+import game.data.RCM;
 import game.data.State;
 import game.gen.Attack;
 import game.gen.Move;
@@ -10,6 +11,7 @@ import gui.board.Board;
 import tests.Test;
 
 import java.awt.*;
+import java.util.List;
 
 public class Chess extends Application {
 
@@ -26,8 +28,8 @@ public class Chess extends Application {
     public Chess() {
         state = new State();
         attack = new Attack();
-        validate = new Validate(attack);
-        move = new Move(attack, validate);
+        move = new Move(attack);
+        validate = new Validate(move);
     }
 
     protected void init() {
@@ -39,10 +41,12 @@ public class Chess extends Application {
     }
 
     public void move(RC s, RC e) {
-        if(validate.validateMove(state, s, e)) {
-            move.move(state, s, e);
+        List<RCM> m = validate.validateMove(state, s, e);
+        if(!m.isEmpty()) {
+            move.move(state, m, !state.turn);
             board.move(state, s, e);
         }
+        System.out.println();
     }
 
     protected void update() {

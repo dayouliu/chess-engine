@@ -1,43 +1,70 @@
 package game.gen;
 
 import game.data.RC;
+import game.data.RCM;
 import game.data.State;
+
+import java.util.List;
 
 public class Move {
 
-    private Validate validate;
     private Attack attack;
 
-    public Move(Attack attack, Validate validate) {
-        this.validate = validate;
+    public Move(Attack attack) {
         this.attack = attack;
     }
 
-    public void move(State state, RC s, RC e) {
-        int dr = Util.dr(s, e);
-        int dc = Util.dc(s, e);
+    public void check(State state) {
+        attack.genAttackArr(state);
+        RC k = state.find(state.turn ? State.KINGW : State.KINGB);
+        state.check = state.attack[k.r][k.c] > 0;
+    }
 
-        // en passant
-        if(validate.validatePawnEnpassant(state.board, state.last(), s, e)) {
-            state.board[e.r-dr][e.c] = 0;
-        }
-
-        // castle
-        if(validate.validateKingCastle(state.board, state.attack, state.moved, state.check, s, e)) {
-            state.board[e.r-dr][e.c] = 0;
-        }
+    public void move(State state, List<RCM> move, boolean turn) {
+        // turn
+        state.turn = turn;
 
         // move
-        state.move(s, e);
+        for(RCM m : move) {
+            state.board[m.s.r][m.s.c] = 0;
+            state.board[m.e.r][m.e.c] = m.a;
+        }
+
+        // add to move history
+        state.moves.add(move);
+
+        // moved
+        for(RCM m : move) {
+            ++state.moved[m.s.r][m.s.c];
+            ++state.moved[m.e.r][m.e.c];
+        }
 
         // check
-        attack.genAttackArr(state, state.turn);
-        int kid = state.turn ? State.KINGW : State.KINGB;
-        RC k = state.find(kid);
-        if(state.attack[k.r][k.c] > 0) state.check = true; else state.check = false;
-        System.out.println("check: " + state.check);
-
-        System.out.println();
+        check(state);
     }
-    
+
+    public void unmove(State state, boolean turn) {
+        // unturn
+        state.turn = turn;
+
+        // unmove
+        List<RCM> move = state.moves.get(state.moves.size()-1);
+        for(RCM m : move) {
+            state.board[m.s.r][m.s.c] = m.a;
+            state.board[m.e.r][m.e.c] = m.b;
+        }
+
+        // add to move history
+        state.moves.remove(state.moves.size()-1);
+
+        // unmoved
+        for(RCM m : move) {
+            --state.moved[m.s.r][m.s.c];
+            --state.moved[m.e.r][m.e.c];
+        }
+
+        // check
+        check(state);
+    }
+
 }
