@@ -1,6 +1,6 @@
 package tests;
 
-import game.gen.Attack;
+import game.logic.Attack;
 
 public class Test {
 

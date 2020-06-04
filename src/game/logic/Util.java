@@ -1,4 +1,4 @@
-package game.gen;
+package game.logic;
 
 import game.data.RC;
 import game.data.RCM;

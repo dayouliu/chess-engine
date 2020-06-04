@@ -3,10 +3,9 @@ package gui.board;
 import game.data.RC;
 import gui.Assets;
 import main.Application;
-import game.gen.Validate;
+import game.logic.Validate;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class Piece {
 

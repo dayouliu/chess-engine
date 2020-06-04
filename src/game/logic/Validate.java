@@ -1,4 +1,4 @@
-package game.gen;
+package game.logic;
 
 import game.data.RC;
 import game.data.RCM;
@@ -9,10 +9,10 @@ import java.util.List;
 
 public class Validate {
 
-    private Move movement;
+    private Movement movement;
 
-    public Validate(Move move) {
-        this.movement = move;
+    public Validate(Movement movement) {
+        this.movement = movement;
     }
 
     private boolean prevalidate(int[][] board, RC s, RC e, boolean turn) {

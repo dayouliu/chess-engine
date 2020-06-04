@@ -1,4 +1,4 @@
-package game.gen;
+package game.logic;
 
 import game.data.RC;
 import game.data.RCM;
@@ -7,11 +7,11 @@ import game.data.State;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Move {
+public class Movement {
 
     private Attack attack;
 
-    public Move(Attack attack) {
+    public Movement(Attack attack) {
         this.attack = attack;
     }
 
@@ -19,10 +19,6 @@ public class Move {
         attack.genAttackArr(state);
         RC k = state.find(state.turn ? State.KINGW : State.KINGB);
         state.check = state.attack[k.r][k.c] > 0;
-    }
-
-    public void mate(State state) {
-
     }
 
     public void move(State state, List<RCM> move, boolean turn) {

@@ -3,15 +3,12 @@ package main;
 import game.data.RC;
 import game.data.RCM;
 import game.data.State;
-import game.gen.Attack;
-import game.gen.Move;
-import game.gen.Util;
-import game.gen.Validate;
+import game.logic.*;
 import gui.Assets;
 import gui.board.Board;
-import tests.Test;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Chess {
@@ -20,18 +17,23 @@ public class Chess {
 
     public State state;
     public Attack attack;
+    public Movement movement;
     public Validate validate;
-    public Move move;
+    public Gen gen;
 
     public Board board;
     public Assets assets;
+
+    private List<List<RCM>> moves;
 
     public Chess(Application app) {
         this.app = app;
         state = new State();
         attack = new Attack();
-        move = new Move(attack);
-        validate = new Validate(move);
+        movement = new Movement(attack);
+        validate = new Validate(movement);
+        gen = new Gen(validate);
+        moves = gen.genMoves(state);
     }
 
     public void init() {
@@ -43,15 +45,16 @@ public class Chess {
     public void move(RC s, RC e) {
         List<RCM> m = validate.validateMove(state, s, e);
         if(!m.isEmpty()) {
-            move.move(state, m);
+            movement.move(state, m);
             board.move(state, s, e);
         }
+        moves = gen.genMoves(state);
         Util.print(state.board);
         System.out.println();
     }
 
     public void unmove() {
-        move.unmove(state, !state.turn);
+        movement.unmove(state, !state.turn);
     }
 
     public void update() {
@@ -60,6 +63,16 @@ public class Chess {
 
     public void render(Graphics g) {
         board.render(g);
+        for(List<RCM> move : moves) {
+            RCM m = move.get(0);
+            double len = app.getChess().getBoard().getLen();
+            Point tlc = app.getChess().getBoard().getTLC();
+            int sc = (int)((tlc.x + m.s.c * len) + len/2);
+            int sr = (int)((tlc.y + m.s.r * len) + len/2);
+            int ec = (int)((tlc.x + m.e.c * len) + len/2);
+            int er = (int)((tlc.y + m.e.r * len) + len/2);
+            g.drawLine(sc, sr, ec, er);
+        }
     }
 
     public void resize() {
