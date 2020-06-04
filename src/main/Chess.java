@@ -1,5 +1,6 @@
 package main;
 
+import game.ai.Heuristic;
 import game.data.RC;
 import game.data.RCM;
 import game.data.State;
@@ -22,6 +23,8 @@ public class Chess {
     public Gen gen;
     public Flag flag;
 
+    public Heuristic heuristic;
+
     public Board board;
     public Assets assets;
 
@@ -33,6 +36,7 @@ public class Chess {
         validate = new Validate(movement);
         gen = new Gen(validate);
         flag = new Flag(gen);
+        heuristic = new Heuristic();
     }
 
     public void init() {
@@ -59,6 +63,7 @@ public class Chess {
         System.out.println("valid: " + !m.isEmpty());
         System.out.println("check: " + state.check);
         System.out.println("mate: " + state.mate);
+        System.out.println("heuristic: " + heuristic.heuristic(state));
         System.out.println();
     }
 

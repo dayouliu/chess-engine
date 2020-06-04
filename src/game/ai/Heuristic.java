@@ -9,24 +9,25 @@ public class Heuristic {
     private double mobility = 0.1;
 
     public double heuristic(State state) {
-        double h = 0;
-        int[] pieces = Util.pieces(state.board);
-        int s = !state.turn ? 1 : 7;
-        int e = !state.turn ? 6 : 12;
+        double w = 0;
+        double b = 0;
 
-        for(int i = s; i <= e; ++i) {
-            h += pieces[i] * material[i-s];
-        }
+        int[] pieces = Util.pieces(state.board);
+        for(int i = 1; i <= 6; ++i)  w += pieces[i] * material[i-1];
+        for(int i = 7; i <= 12; ++i) b += pieces[i] * material[i-7];
 
         for(int i = 0; i < 8; ++i) {
             for(int j = 0; j < 8; ++j) {
-                h += state.attack[0][i][j] * mobility;
+                w += state.attack[0][i][j] * mobility;
+                b += state.attack[1][i][j] * mobility;
             }
         }
 
-        // if(state.mate)
+        if(state.mate && !state.turn) return 200;
+        if(state.mate && state.turn) return -200;
+        if(state.draw) return 0;
 
-        return h;
+        return w-b;
     }
 
 }
