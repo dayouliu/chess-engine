@@ -1,6 +1,6 @@
 package game.ai;
 
-import game.data.State;
+import game.data.ChessState;
 import game.logic.Util;
 
 public class Heuristic {
@@ -8,7 +8,7 @@ public class Heuristic {
     private double[] material = {1, 3, 3, 5, 9, 200};
     private double mobility = 0.1;
 
-    public double heuristic(State state) {
+    public double heuristic(ChessState state) {
         double w = 0;
         double b = 0;
 
@@ -18,8 +18,8 @@ public class Heuristic {
 
         for(int i = 0; i < 8; ++i) {
             for(int j = 0; j < 8; ++j) {
-                w += state.attack[0][i][j] * mobility;
-                b += state.attack[1][i][j] * mobility;
+                w += state.attacked[0][i][j] * mobility;
+                b += state.attacked[1][i][j] * mobility;
             }
         }
 

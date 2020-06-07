@@ -1,19 +1,12 @@
 package game.logic;
 
-import game.data.RC;
 import game.data.RCM;
-import game.data.State;
+import game.data.ChessState;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class Flag {
-
-    private Gen gen;
-
-    public Flag(Gen gen) {
-        this.gen = gen;
-    }
 
     private int[][] draws = {
             {2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
@@ -23,20 +16,15 @@ public class Flag {
             {3, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1},
     };
 
-    public void turn(State state) {
+    public void turn(ChessState state) {
         state.turn = !state.turn;
     }
 
-    public void check(State state) {
-        RC k = state.find(state.turn ? State.KINGW : State.KINGB);
-        state.check = state.attack[state.turn ? 1 : 0][k.r][k.c] > 0;
+    public void mate(ChessState state, List<List<RCM>> next) {
+        state.mate = next.isEmpty();
     }
 
-    public void mate(State state) {
-        state.mate = state.next.isEmpty();
-    }
-
-    public void draw(State state) {
+    public void draw(ChessState state) {
         int[] pieces = Util.pieces(state.board);
         for(int[] pos : draws) {
             if(Arrays.equals(pieces, pos)) {
@@ -46,12 +34,10 @@ public class Flag {
         }
     }
 
-    public void flag(State state) {
+    public void unflag(ChessState state) {
         turn(state);
-        check(state);
-        state.next = gen.genMoves(state, state.turn);
-        mate(state);
-        draw(state);
+        state.mate = false;
+        state.draw = false;
     }
 
 }

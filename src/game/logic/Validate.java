@@ -2,17 +2,17 @@ package game.logic;
 
 import game.data.RC;
 import game.data.RCM;
-import game.data.State;
+import game.data.ChessState;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Validate {
 
-    private Movement movement;
+    private Move1 move1;
 
-    public Validate(Movement movement) {
-        this.movement = movement;
+    public Validate(Move1 move1) {
+        this.move1 = move1;
     }
 
     private boolean prevalidate(int[][] board, RC s, RC e, boolean turn) {
@@ -84,19 +84,19 @@ public class Validate {
         boolean enpasswl =
                 s.r == 3 && pdr == -1 && pdc == -1 &&
                         last.s != null && last.s.equals(s.r-2, s.c-1) && last.e.equals(s.r, s.c-1) &&
-                        board[s.r][s.c-1] == State.PAWNB && white && Util.empty(board, new RC(s.r-1, s.c-1));
+                        board[s.r][s.c-1] == ChessState.PAWNB && white && Util.empty(board, new RC(s.r-1, s.c-1));
         boolean enpasswr =
                 s.r == 3 && pdr == -1 && pdc == 1 &&
                         last.s != null && last.s.equals(s.r-2, s.c+1) && last.e.equals(s.r, s.c+1) &&
-                        board[s.r][s.c+1] == State.PAWNB && white && Util.empty(board, new RC(s.r-1, s.c+1));
+                        board[s.r][s.c+1] == ChessState.PAWNB && white && Util.empty(board, new RC(s.r-1, s.c+1));
         boolean enpassbl =
                 s.r == 4 && pdr == 1 && pdc == -1 &&
                         last.s != null && last.s.equals(s.r+2, s.c-1) && last.e.equals(s.r, s.c-1) &&
-                        board[s.r][s.c-1] == State.PAWNW && !white && Util.empty(board, new RC(s.r+1, s.c-1));
+                        board[s.r][s.c-1] == ChessState.PAWNW && !white && Util.empty(board, new RC(s.r+1, s.c-1));
         boolean enpassbr =
                 s.r == 4 && pdr == 1 && pdc == 1 &&
                         last.s != null && last.s.equals(s.r+2, s.c+1) && last.e.equals(s.r, s.c+1) &&
-                        board[s.r][s.c+1] == State.PAWNW && !white && Util.empty(board, new RC(s.r+1, s.c+1));
+                        board[s.r][s.c+1] == ChessState.PAWNW && !white && Util.empty(board, new RC(s.r+1, s.c+1));
         return enpasswl || enpasswr || enpassbl || enpassbr;
     }
 
@@ -124,12 +124,12 @@ public class Validate {
         if(take || w1 || w2 || b1 || b2) {
             move.add(Util.move(board, s, e));
             if(validatePawnPromotion(board, s, e)) {
-                move.add(new RCM(e, e, white ? State.QUEENW : State.QUEENB, white ? State.PAWNW : State.PAWNB));
+                move.add(new RCM(e, e, white ? ChessState.QUEENW : ChessState.QUEENB, white ? ChessState.PAWNW : ChessState.PAWNB));
             }
         } else if(enpass) {
             move.add(Util.move(board, s, e));
             RC other = new RC(e.r-pdr, e.c);
-            move.add(new RCM(other, other, State.EMPTY, board[e.r-pdr][e.c]));
+            move.add(new RCM(other, other, ChessState.EMPTY, board[e.r-pdr][e.c]));
         }
         return move;
     }
@@ -170,22 +170,22 @@ public class Validate {
 
     public boolean validateKingCastle(int[][] board, int[][] attack, int[][] moved, boolean check, RC s, RC e) {
         boolean wcOO =
-                board[s.r][s.c] == State.KINGW && s.equals(7, 4) && e.equals(7,6) &&
+                board[s.r][s.c] == ChessState.KINGW && s.equals(7, 4) && e.equals(7,6) &&
                 !check && validateClear(board, s, e, 0, 1, false) &&
                 !validateAttacked(attack, new RC(s.r, s.c+1)) && !validateAttacked(attack, new RC(s.r, s.c+2)) &&
                 moved[7][4] == 0 && moved[7][7] == 0;
         boolean wcOOO =
-                board[s.r][s.c] == State.KINGW && s.equals(7, 4) && e.equals(7,2) &&
+                board[s.r][s.c] == ChessState.KINGW && s.equals(7, 4) && e.equals(7,2) &&
                 !check && validateClear(board, s, e, 0, -1, false) &&
                 !validateAttacked(attack, new RC(s.r, s.c-1)) && !validateAttacked(attack, new RC(s.r, s.c-2)) &&
                 moved[7][4] == 0 && moved[7][0] == 0;
         boolean bcOO =
-                board[s.r][s.c] == State.KINGB && s.equals(0, 4) && e.equals(0,6) &&
+                board[s.r][s.c] == ChessState.KINGB && s.equals(0, 4) && e.equals(0,6) &&
                 !check && validateClear(board, s, e, 0, 1, false) &&
                 !validateAttacked(attack, new RC(s.r, s.c+1)) && !validateAttacked(attack, new RC(s.r, s.c+2)) &&
                 moved[0][4] == 0 && moved[0][7] == 0;
         boolean bcOOO =
-                board[s.r][s.c] == State.KINGB && s.equals(0, 4) && e.equals(0,2) &&
+                board[s.r][s.c] == ChessState.KINGB && s.equals(0, 4) && e.equals(0,2) &&
                 !check && validateClear(board, s, e, 0, -1, false) &&
                 !validateAttacked(attack, new RC(s.r, s.c-1)) && !validateAttacked(attack, new RC(s.r, s.c-2)) &&
                 moved[0][4] == 0 && moved[0][0] == 0;
@@ -210,33 +210,36 @@ public class Validate {
         return move;
     }
 
-    public List<RCM> validateMove(State state, RC s, RC e) {
+    public List<RCM> validateMove(ChessState state, RC s, RC e) {
         int[][] b = state.board;
-        int[][] a = state.attack[state.turn ? 1 : 0];
+        int[][] a = state.attacked[state.turn ? 1 : 0];
         int id = state.board[s.r][s.c];
         List<RCM> move = new ArrayList<RCM>();
         if(prevalidate(b, s, e, state.turn)) {
             // check space validity
-            if (id == State.PAWNW || id == State.PAWNB) {
-                move = validatePawnMove(b, state.last(), s, e);
-            } else if (id == State.KNIGHTW || id == State.KNIGHTB) {
+            if (id == ChessState.PAWNW || id == ChessState.PAWNB) {
+                move = validatePawnMove(b, Util.last(state), s, e);
+            } else if (id == ChessState.KNIGHTW || id == ChessState.KNIGHTB) {
                 move = validateKnightMove(b, s, e);
-            } else if (id == State.BISHOPW || id == State.BISHOPB) {
+            } else if (id == ChessState.BISHOPW || id == ChessState.BISHOPB) {
                 move = validateBishopMove(b, s, e);
-            } else if (id == State.ROOKW || id == State.ROOKB) {
+            } else if (id == ChessState.ROOKW || id == ChessState.ROOKB) {
                 move = validateRookMove(b, s, e);
-            } else if (id == State.QUEENW || id == State.QUEENB) {
+            } else if (id == ChessState.QUEENW || id == ChessState.QUEENB) {
                 move = validateQueenMove(b, s, e);
-            } else if (id == State.KINGW || id == State.KINGB) {
-                move = validateKingMove(b, a, state.moved, state.check, s, e);
+            } else if (id == ChessState.KINGW || id == ChessState.KINGB) {
+                move = validateKingMove(b, a, state.moved, Util.check(state), s, e);
             }
             // check pin validity
             if(!move.isEmpty()) {
-                movement.move(state, move);
-                RC king = state.find(state.turn ? State.KINGW : State.KINGB);
-                if(state.attack[state.turn ? 1 : 0][king.r][king.c] > 0)
-                    move.clear();
-                movement.unmove(state);
+                move1.move(state, move);
+                RC king = Util.find(state, state.turn ? ChessState.KINGW : ChessState.KINGB);
+                if(king == null) {
+                    Util.print(state.board);
+                    System.out.println(state.moves.size());
+                }
+                if(state.attacked[state.turn ? 1 : 0][king.r][king.c] > 0) move.clear();
+                move1.unmove(state);
             }
         }
 

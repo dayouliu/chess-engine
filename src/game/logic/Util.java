@@ -2,7 +2,9 @@ package game.logic;
 
 import game.data.RC;
 import game.data.RCM;
-import game.data.State;
+import game.data.ChessState;
+
+import java.util.List;
 
 public class Util {
 
@@ -73,7 +75,29 @@ public class Util {
     }
 
     public static boolean pawn(int id) {
-        return id == State.PAWNW || id == State.PAWNB;
+        return id == ChessState.PAWNW || id == ChessState.PAWNB;
+    }
+
+    public static RC find(ChessState state, int id) {
+        for(int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                if(state.board[i][j] == id) return new RC(i, j);
+            }
+        }
+        return null;
+    }
+
+    public static RCM last(ChessState state) {
+        return state.moves.isEmpty() ? null : state.moves.get(state.moves.size()-1).get(0);
+    }
+
+    public static boolean check(ChessState state) {
+        RC k = find(state, state.turn ? ChessState.KINGW : ChessState.KINGB);
+        return state.attacked[state.turn ? 1 : 0][k.r][k.c] > 0;
+    }
+
+    public static List<List<RCM>> next(ChessState state) {
+        return state.nexts.isEmpty() ? null : state.nexts.get(state.nexts.size()-1);
     }
 
 }

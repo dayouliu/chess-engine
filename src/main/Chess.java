@@ -1,92 +1,125 @@
 package main;
 
+import game.ai.Engine;
 import game.ai.Heuristic;
 import game.data.RC;
 import game.data.RCM;
-import game.data.State;
+import game.data.ChessState;
 import game.logic.*;
 import gui.Assets;
 import gui.board.Board;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Chess {
 
-    public Application app;
+    private Application app;
 
-    public State state;
-    public Attack attack;
-    public Movement movement;
-    public Validate validate;
-    public Gen gen;
-    public Flag flag;
-
-    public Heuristic heuristic;
+    private ChessState state;
+    private Attack attack;
+    private Move1 move1;
+    private Move2 move2;
+    private Validate validate;
+    private Gen gen;
+    private Flag flag;
+    private Heuristic heuristic;
+    private Engine engine;
 
     public Board board;
     public Assets assets;
 
+    private boolean turn = true;
+
     public Chess(Application app) {
         this.app = app;
-        state = new State();
         attack = new Attack();
-        movement = new Movement(attack);
-        validate = new Validate(movement);
+        move1 = new Move1(attack);
+        validate = new Validate(move1);
         gen = new Gen(validate);
-        flag = new Flag(gen);
+        flag = new Flag();
+        move2 = new Move2(move1, validate, gen, flag);
         heuristic = new Heuristic();
+        engine = new Engine(heuristic, gen, move2);
+        state = new ChessState();
+        state.nexts.add(gen.genMoves(state, state.turn));
     }
 
     public void init() {
         assets = new Assets();
         board = new Board(app);
         board.init(state);
-        state.next = gen.genMoves(state, state.turn);
     }
 
     public void move(RC s, RC e) {
-        List<RCM> m = validate.validateMove(state, s, e);
-        if(!m.isEmpty()) {
-            movement.move(state, m);
-            flag.flag(state);
-            board.move(state, s, e);
+        if(turn) {
+            List<RCM> move = validate.validateMove(state, s, e);
+            if (!move.isEmpty()) {
+                move2.move(state, move);
+                turn = false;
+                if (!state.mate && !state.draw) {
+                    engine.calc(state);
+                }
+            }
         }
-        /*
-        Util.print(state.attack[0]);
-    `   System.out.println();
-        Util.print(state.attack[1]);
-        System.out.println();`
-         */
+
+        board.move(state);
         Util.print(state.board);
-        System.out.println("valid: " + !m.isEmpty());
-        System.out.println("check: " + state.check);
         System.out.println("mate: " + state.mate);
+        System.out.println("draw: " + state.draw);
         System.out.println("heuristic: " + heuristic.heuristic(state));
         System.out.println();
     }
 
-    public void unmove() {
-        movement.unmove(state);
-    }
-
     public void update() {
         board.update();
+
+        if(!turn && !state.mate && !state.draw) {
+            List<RCM> m = engine.move(state);
+            if(m != null) {
+                move2.move(state, m);
+                turn = true;
+                board.move(state);
+            }
+        }
     }
 
     public void render(Graphics g) {
         board.render(g);
-        for(List<RCM> move : state.next) {
-            RCM m = move.get(0);
+        List<List<RCM>> next = Util.next(state);
+
+        /*
+        if(next != null) {
+            for (List<RCM> move : next) {
+                RCM m = move.get(0);
+                double len = app.getChess().getBoard().getLen();
+                Point tlc = app.getChess().getBoard().getTLC();
+                int sc = (int) ((tlc.x + m.s.c * len) + len / 2);
+                int sr = (int) ((tlc.y + m.s.r * len) + len / 2);
+                int ec = (int) ((tlc.x + m.e.c * len) + len / 2);
+                int er = (int) ((tlc.y + m.e.r * len) + len / 2);
+                g.drawLine(sc, sr, ec, er);
+            }
+        }
+         */
+
+        RCM last = Util.last(state);
+        if(turn && last != null) {
             double len = app.getChess().getBoard().getLen();
             Point tlc = app.getChess().getBoard().getTLC();
-            int sc = (int)((tlc.x + m.s.c * len) + len/2);
-            int sr = (int)((tlc.y + m.s.r * len) + len/2);
-            int ec = (int)((tlc.x + m.e.c * len) + len/2);
-            int er = (int)((tlc.y + m.e.r * len) + len/2);
+            int sc = (int) ((tlc.x + last.s.c * len) + len / 2);
+            int sr = (int) ((tlc.y + last.s.r * len) + len / 2);
+            int ec = (int) ((tlc.x + last.e.c * len) + len / 2);
+            int er = (int) ((tlc.y + last.e.r * len) + len / 2);
             g.drawLine(sc, sr, ec, er);
         }
+
+        /*
+        if(!turn) {
+            g.setFont(new Font("", Font.PLAIN, 20));
+            g.drawString("Thinking...", app.getCanvasWidth()/2-50, 50);
+        }
+        */
     }
 
     public void resize() {
@@ -101,11 +134,11 @@ public class Chess {
         return board;
     }
 
-    public State getState() {
+    public ChessState getState() {
         return state;
     }
 
-    public void setState(State state) {
+    public void setState(ChessState state) {
         this.state = state;
     }
 

@@ -10,9 +10,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferStrategy;
 
-public class Application {
+public class Application extends Thread {
 
-	protected boolean running;
+	protected boolean running = true;
 
 	protected JFrame frame;
 	protected Canvas canvas;
@@ -25,11 +25,6 @@ public class Application {
 	protected Mouse mouse;
 
 	protected Chess chess;
-
-	protected void start() {
-		running = true;
-		run();
-	}
 	
 	protected void init() {
 		// frame creation
@@ -86,7 +81,7 @@ public class Application {
 	protected double frames = 0;
 	protected double fps = 0;
 
-	protected void run() {
+	public void run() {
 		init();
 		while(running) {
 			long current = System.nanoTime();
@@ -110,7 +105,6 @@ public class Application {
 				frames = 0;
 			}
 		}
-		stop();
 	}
 
 	protected void update() {
@@ -131,10 +125,6 @@ public class Application {
 		// Render end
 		bs.show();
 		g.dispose();
-	}
-	
-	protected void stop() {
-		running = false;
 	}
 
 	public int getFrameWidth() {

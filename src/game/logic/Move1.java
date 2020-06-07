@@ -1,21 +1,20 @@
 package game.logic;
 
-import game.data.RC;
 import game.data.RCM;
-import game.data.State;
+import game.data.ChessState;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Movement {
+public class Move1 {
 
     private Attack attack;
 
-    public Movement(Attack attack) {
+    public Move1(Attack attack) {
         this.attack = attack;
     }
 
-    public void move(State state, List<RCM> move) {
+    public void move(ChessState state, List<RCM> move) {
         // move
         for(RCM m : move) {
             state.board[m.s.r][m.s.c] = 0;
@@ -34,7 +33,7 @@ public class Movement {
         attack.genAttackArr(state);
     }
 
-    public void unmove(State state) {
+    public void unmove(ChessState state) {
         // unmove
         List<RCM> move = state.moves.get(state.moves.size()-1);
         for(int i = move.size()-1; i >= 0; --i) {

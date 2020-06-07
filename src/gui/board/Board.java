@@ -1,8 +1,7 @@
 package gui.board;
 
 import game.data.RC;
-import game.data.State;
-import game.logic.Util;
+import game.data.ChessState;
 import main.Application;
 
 import java.awt.*;
@@ -41,12 +40,12 @@ public class Board {
 		tlc.y = (int) (centerY - (row / 2) * len);
 	}
 
-	public void init(State s) {
+	public void init(ChessState s) {
 		set(s);
 		resize();
 	}
 
-	public void set(State state) {
+	public void set(ChessState state) {
 		int[][] board = state.board;
 		for(int i = 0; i < row; ++i) {
 			for(int j = 0; j < col; ++j) {
@@ -58,7 +57,7 @@ public class Board {
 		}
 	}
 
-	public void move(State state, RC s, RC e) {
+	public void move(ChessState state) {
 		for(int i = 0; i < 8; ++i) {
 			for(int j = 0; j < 8; ++j) {
 				int id = state.board[i][j];

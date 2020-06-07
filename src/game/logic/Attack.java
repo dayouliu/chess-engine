@@ -1,7 +1,7 @@
 package game.logic;
 
 import game.data.RC;
-import game.data.State;
+import game.data.ChessState;
 
 public class Attack {
 
@@ -77,9 +77,9 @@ public class Attack {
         genAttack(a, b, s, 1, 1, 1);
     }
 
-    public void genAttackArr(State state) {
-        int[][] aw = state.attack[0];
-        int[][] ab = state.attack[1];
+    public void genAttackArr(ChessState state) {
+        int[][] aw = state.attacked[0];
+        int[][] ab = state.attacked[1];
         int[][] b = state.board;
         for(int i = 0; i < Util.row; ++i) {
             for(int j = 0; j < Util.col; ++j) {
@@ -93,17 +93,17 @@ public class Attack {
                 RC p = new RC(i, j);
                 if(id != 0) {
                     int[][] a = Util.white(b, p) ? aw : ab;
-                    if (id == State.PAWNW || id == State.PAWNB) {
+                    if (id == ChessState.PAWNW || id == ChessState.PAWNB) {
                         genAttackPawn(a, b, p);
-                    } else if (id == State.KNIGHTW || id == State.KNIGHTB) {
+                    } else if (id == ChessState.KNIGHTW || id == ChessState.KNIGHTB) {
                         genAttackKnight(a, b, p);
-                    } else if (id == State.BISHOPW || id == State.BISHOPB) {
+                    } else if (id == ChessState.BISHOPW || id == ChessState.BISHOPB) {
                         genAttackBishop(a, b, p);
-                    } else if (id == State.ROOKW || id == State.ROOKB) {
+                    } else if (id == ChessState.ROOKW || id == ChessState.ROOKB) {
                         genAttackRook(a, b, p);
-                    } else if (id == State.QUEENW || id == State.QUEENB) {
+                    } else if (id == ChessState.QUEENW || id == ChessState.QUEENB) {
                         genAttackQueen(a, b, p);
-                    } else if (id == State.KINGW || id == State.KINGB) {
+                    } else if (id == ChessState.KINGW || id == ChessState.KINGB) {
                         genAttackKing(a, b, p);
                     }
                 }
