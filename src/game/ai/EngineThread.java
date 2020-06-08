@@ -12,7 +12,7 @@ class EngineThread extends Thread {
     private Heuristic heuristic;
     private Move2 move2;
 
-    private int maxdepth = 5;
+    private int maxdepth = 3;
     private int NEGINF = Integer.MIN_VALUE;
     private int POSINF = Integer.MAX_VALUE;
 

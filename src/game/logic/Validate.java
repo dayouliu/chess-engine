@@ -176,7 +176,7 @@ public class Validate {
                 moved[7][4] == 0 && moved[7][7] == 0;
         boolean wcOOO =
                 board[s.r][s.c] == ChessState.KINGW && s.equals(7, 4) && e.equals(7,2) &&
-                !check && validateClear(board, s, e, 0, -1, false) &&
+                !check && validateClear(board, s, new RC(7, 1), 0, -1, false) &&
                 !validateAttacked(attack, new RC(s.r, s.c-1)) && !validateAttacked(attack, new RC(s.r, s.c-2)) &&
                 moved[7][4] == 0 && moved[7][0] == 0;
         boolean bcOO =
@@ -186,7 +186,7 @@ public class Validate {
                 moved[0][4] == 0 && moved[0][7] == 0;
         boolean bcOOO =
                 board[s.r][s.c] == ChessState.KINGB && s.equals(0, 4) && e.equals(0,2) &&
-                !check && validateClear(board, s, e, 0, -1, false) &&
+                !check && validateClear(board, s, new RC(0, 1), 0, -1, false) &&
                 !validateAttacked(attack, new RC(s.r, s.c-1)) && !validateAttacked(attack, new RC(s.r, s.c-2)) &&
                 moved[0][4] == 0 && moved[0][0] == 0;
         return wcOO || wcOOO || bcOO || bcOOO;
