@@ -50,12 +50,13 @@ public class Engine {
     }
 
     public void calc(ChessState state) {
+        boolean turn = state.turn;
         threads.clear();
         List<List<RCM>> next = Util.next(state);
         for(int i = 0; i < next.size(); ++i) {
             List<RCM> n = next.get(i);
             move2.move(state, n);
-            EngineThread thread = new EngineThread(heuristic, move2, state, 1, NEGINF, POSINF, !state.turn);
+            EngineThread thread = new EngineThread(heuristic, move2, state, 1, NEGINF, POSINF, !turn);
             move2.unmove(state);
             thread.start();
             threads.add(thread);
