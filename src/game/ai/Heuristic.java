@@ -17,7 +17,7 @@ public class Heuristic {
 
         for(int i = 0; i < 8; ++i) {
             for(int j = 0; j < 8; ++j) {
-                double mobility = 0.05 + 0.05 * ((Math.abs(i-3.5)+Math.abs(j-3.5)) / 7);
+                double mobility = 0.06 + 0.04 * ((Math.abs(i-3.5)+Math.abs(j-3.5)) / 7);
                 w += state.attacked[0][i][j] * mobility;
                 b += state.attacked[1][i][j] * mobility;
             }

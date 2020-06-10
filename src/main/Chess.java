@@ -77,9 +77,14 @@ public class Chess {
         if(!turn && !state.mate && !state.draw) {
             List<RCM> m = engine.move(state);
             if(m != null) {
+                Util.print(state.board);
+                System.out.println("mate: " + state.mate);
+                System.out.println("draw: " + state.draw);
+                System.out.println("heuristic: " + heuristic.heuristic(state));
                 move2.move(state, m);
                 turn = true;
                 board.move(state);
+                System.out.println();
             }
         }
     }
