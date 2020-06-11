@@ -1,6 +1,6 @@
 # Chess Application
 
-![alt text](https://github.com/imdividual/chess-engine/blob/master/poster.png =500x500)
+<img src="https://github.com/imdividual/chess-engine/blob/master/poster.png " alt="drawing" width="200"/>
 
 Made 100% from scratch in pure Java, no additional libraries used
 
