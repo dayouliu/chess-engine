@@ -10,7 +10,7 @@ Open in IntelliJ and run the Application class
 ## Features
 * Supports all valid chess moves (ex: en-passant, castling)
 * Move checks, move generations, mate and draw detection
-* Engine that uses minimax algorithm with alpha-beta pruning
+* Engine that uses minimax algorithm with alpha-beta pruning and multi-threading
 * Front-end responsive GUI with custom chess art
 
 ## To-do
